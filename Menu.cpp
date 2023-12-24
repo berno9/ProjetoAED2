@@ -6,17 +6,6 @@
 
 Menu::Menu(Graph<std::string> *g_) : g(g_){}
 
-/*std::string Menu::findAirport(std::string name) {
-    auto it = airports.find(Airport(name));
-    if (it == airports.end()) return "";
-    return it->getCode();
-}
-
-std::string Menu::findAirline(std::string name) {
-    auto it = airlines.find(Airline(name));
-    if (it == airlines.end()) return "";
-    return it->getCode();
-}*/
 
 void Menu::Base(){
     std::cout<<std::endl;

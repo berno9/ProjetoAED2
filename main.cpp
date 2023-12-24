@@ -82,7 +82,6 @@ void loadFlights(vector<Flight>& flights) {
         flights.push_back(flight);
         temp.clear();
     }
-    std::cout << flights.size() << std::endl;
 }
 
 void loadFlightsToEdges(Graph<string>* &g, const set<Airport>& airports, vector<Flight>& flights) {

@@ -18,8 +18,6 @@ private:
     Graph<std::string>* g;
 public:
     Menu(Graph<std::string>* g_);
-    /*std::string findAirport(std::string name);
-    std::string findAirline(std::string name);*/
     void Base();
         void DisplayOptions();
             void SourceNo();
