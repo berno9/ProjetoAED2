@@ -42,6 +42,8 @@ public:
             map<std::string,int> nReachableDestinationsAirports(Airport airport,int k); // 3vi
             map<std::string,int> nReachableDestinationsCities(Airport airport,int k); // 3vi
             map<std::string,int> nReachableDestinationsCountries(Airport airport,int k); // 3vi
+            std::vector<pair<Airport, int>> nGreatestAirTrafficCapacity(int k); // 3viii
+            std::unordered_set<std::string> essentialAirports(); //3ix
 };
 
 

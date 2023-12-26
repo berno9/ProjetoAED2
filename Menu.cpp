@@ -2,6 +2,7 @@
 // Created by User on 23/12/2023.
 //
 
+#include <algorithm>
 #include "Menu.h"
 
 Menu::Menu(Graph<Airport> *graph) {
@@ -143,7 +144,7 @@ void Menu::DestNo(){
     if (target == "0") DisplayOptions();
     bool exists = false;
 
-    for (auto vertex : g.getVertexSet()) {
+    for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getDest()->getInfo().getName() == target) {
                 exists = true;
@@ -179,7 +180,7 @@ void Menu::SourceDestNo(){
     std::cin>>target;
     bool exists = false;
 
-    for (auto vertex : g.getVertexSet()) {
+    for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (vertex->getInfo().getName() == source && flight.getDest()->getInfo().getName() == target) {
                 exists = true;
@@ -193,7 +194,7 @@ void Menu::SourceDestNo(){
 
 void Menu::allNo(){
     bool exists = false;
-    for (auto vertex : g.getVertexSet()) {
+    for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             exists = true;
             std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
@@ -227,7 +228,7 @@ void Menu::SourceYes(){
     std::cin>>source;
     bool exists = false;
 
-    for (auto vertex : g.getVertexSet()) {
+    for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getAirlineOfFlight().getName() == airline && vertex->getInfo().getName() == source) {
                 exists = true;
@@ -263,7 +264,7 @@ void Menu::DestYes(){
     std::cin>>target;
     bool exists = false;
 
-    for (auto vertex : g.getVertexSet()) {
+    for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getAirlineOfFlight().getName() == airline && flight.getDest()->getInfo().getName()== target) {
                 exists = true;
@@ -304,7 +305,7 @@ void Menu::SourceDestYes(){
     std::cin>>target;
     bool exists = false;
 
-    for (auto vertex : g.getVertexSet()) {
+    for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getAirlineOfFlight().getName() == airline && vertex->getInfo().getName() == source && flight.getDest()->getInfo().getName() == target) {
                 exists = true;
@@ -335,7 +336,7 @@ void Menu::allYes() {
     if (airline == "0") DisplayOptions();
     bool exists = false;
 
-    for (auto vertex : g.getVertexSet()) {
+    for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getAirlineOfFlight().getName() == airline) {
                 exists = true;
@@ -489,5 +490,78 @@ map<std::string,int> Menu::nReachableDestinationsCountries(Airport airport,int k
     }
     return contagem;
 }
+
+
+
+int totalDegree(Airport airport, Graph<Airport>* g) {
+    auto v = g->findVertex(airport);
+    int total1 = v->getAdj().size();
+    int total = 0;
+    for (auto vertex : g->getVertexSet()) {
+        for (auto edge : vertex->getAdj()) {
+            if (edge.getDest()->getInfo().getCode() == airport.getCode()) total++;
+        }
+    }
+    return total + total1;
+}
+
+bool compare(pair<Airport, int> a1, pair<Airport, int> a2) {
+    return a1.second > a2.second;
+}
+
+std::vector<pair<Airport, int>> Menu::nGreatestAirTrafficCapacity(int k) {
+    std::unordered_set<int> numbers;
+    std::vector<pair<Airport, int>> highest;
+    for (auto vertex : g->getVertexSet()) highest.push_back({vertex->getInfo(), totalDegree(vertex->getInfo(), g)});
+
+    sort(highest.begin(), highest.end(), compare);
+    highest.erase(highest.begin() + k, highest.end());
+    return highest;
+}
+
+void dfs_art(Graph<Airport>* g, Vertex<Airport>* v, std::stack<Airport>& s, std::unordered_set<std::string>& res, std::unordered_set<std::string>& visited, int& i) {
+    v->setNum(i);
+    v->setLow(i);
+    i++;
+
+    s.push(v->getInfo());
+    visited.insert(v->getInfo().getCode());
+
+    for (const auto& edge : v->getAdj()) {
+        Vertex<Airport>* neighbor = edge.getDest();
+
+        if (visited.find(neighbor->getInfo().getCode()) == visited.end()) {
+            dfs_art(g, neighbor, s, res, visited, i);
+            v->setLow(std::min(v->getLow(), neighbor->getLow()));
+
+            if (v->getNum() <= neighbor->getLow()) {
+                if (!s.empty()) {
+                    res.insert(s.top().getCode());
+                    s.pop();
+                }
+                while (!s.empty() && s.top().getCode() != v->getInfo().getCode()) {
+                    res.insert(s.top().getCode());
+                    s.pop();
+                }
+            }
+        } else {
+            v->setLow(std::min(v->getLow(), neighbor->getNum()));
+        }
+    }
+}
+
+std::unordered_set<std::string> Menu::essentialAirports() {
+    std::unordered_set<std::string> result;
+    std::stack<Airport> stack;
+    std::unordered_set<std::string> visited;
+
+    int i = 0; // Variable to assign discovery time to vertices
+
+    for (auto vertex : g->getVertexSet()) {
+        if (visited.find(vertex->getInfo().getCode()) == visited.end()) {
+            dfs_art(g, vertex, stack, result, visited, i);
+        }
+    }
+    return result;
 }
 
