@@ -1,3 +1,0 @@
-C:/Users/User/Documents/SEGUNDO ANO/ProjetoAED5/cmake-build-debug/CMakeFiles/ProjetoAED5.dir
-C:/Users/User/Documents/SEGUNDO ANO/ProjetoAED5/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/User/Documents/SEGUNDO ANO/ProjetoAED5/cmake-build-debug/CMakeFiles/rebuild_cache.dir
