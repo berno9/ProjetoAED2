@@ -15,9 +15,9 @@
 
 class Menu {
 private:
-    Graph<std::string>* g;
+    Graph<Airport> g;
 public:
-    Menu(Graph<std::string>* g_);
+    Menu(Graph<Airport> g);
     void Base();
         void DisplayOptions();
             void SourceNo();

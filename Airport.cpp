@@ -3,9 +3,33 @@
 //
 
 #include "Airport.h"
-
-Airport::Airport(std::string name_) : name(name_) {}
-
+Airport::Airport(){
+    this->code = "";
+    this->name ="";
+    this->city = "";
+    this->country ="";
+    this->latitude =0;
+    this->longitude = 0;
+}
+Airport::Airport(const Airport &other) {
+    this->code = other.code;
+    this->name = other.name;
+    this->city = other.city;
+    this->country = other.country;
+    this->latitude = other.latitude;
+    this->longitude = other.longitude;
+}
+Airport::Airport(std::string code,std::string name,std::string city,std::string country,double latitude,double longitude){
+    this->code = code;
+    this->name = name;
+    this->city = city;
+    this->country = country;
+    this->latitude = latitude;
+    this->longitude = longitude;
+}
+bool Airport ::operator==(const Airport &other){
+    return code == other.code;
+}
 
 void Airport::setCode(std::string code_) {
     code = code_;

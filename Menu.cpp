@@ -1,10 +1,12 @@
 //
 // Created by User on 23/12/2023.
 //
-
+/*
 #include "Menu.h"
 
-Menu::Menu(Graph<std::string> *g_) : g(g_){}
+Menu::Menu(Graph<Airport> g) {
+    this->g = g;
+}
 
 
 void Menu::Base(){
@@ -346,4 +348,5 @@ void Menu::allYes() {
 }
 
 
-/////// Fim do 1 ////////////////
+/////// Fim do 1 /////////////////
+*/

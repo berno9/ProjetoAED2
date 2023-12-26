@@ -6,17 +6,9 @@
 #include <fstream>
 #include <sstream>
 #include <set>
+#include <unordered_map>
 
-
-// Função para encontrar o nome para um código
-std::string findNameForCode(const set<Airport>& airports, std::string code) {
-    for (Airport airport : airports) {
-        if (airport.getCode() == code) return airport.getName();
-    }
-    return "";
-}
-
-void loadAirports(set<Airport>& airports) {
+void loadAirports(unordered_map<std::string ,Airport>& airports) {
     ifstream aeroportos("airports.csv");
     vector<string> temp;
     string line;
@@ -27,25 +19,20 @@ void loadAirports(set<Airport>& airports) {
         string eachWord;
 
         while (getline(iss, eachWord, ',')) temp.push_back(eachWord);
-
-        Airport airport = Airport(temp[1]);
-        airport.setCode(temp[0]);
-        airport.setCity(temp[2]);
-        airport.setCountry(temp[3]);
-        airport.setLatitude(stod(temp[4]));
-        airport.setLongitude(stod(temp[5]));
-
-        airports.insert(airport);
+        Airport airport = Airport(temp[0],temp[1],temp[2],temp[3],stod(temp[4]),stod(temp[5]));
+        airports.insert({temp[0],airport});
         temp.clear();
     }
 }
 
-void loadAirportsToVertices(Graph<string>* &g, const set<Airport>& airports) {
-    for (Airport airport : airports) g->addVertex(airport.getCode() + ',' + airport.getName());
+void loadAirportsToVertices(Graph<Airport> &g, const unordered_map<std::string ,Airport>& airports) {
+    for (auto airport : airports) {
+        g.addVertex(airport.second);
+    }
 }
 
-void loadAirlines(set<Airline>& airlines) {
-    ifstream linhas("airports.csv");
+void loadAirlines(unordered_map<std::string ,Airline> &airlines) {
+    ifstream linhas("airlines.csv");
     vector<string> temp;
     string line;
     getline(linhas, line);  //ignorar a primeira linha
@@ -55,13 +42,8 @@ void loadAirlines(set<Airline>& airlines) {
         string eachWord;
 
         while (getline(iss, eachWord, ',')) temp.push_back(eachWord);
-
-        Airline airline = Airline(temp[1]);
-        airline.setCode(temp[0]);
-        airline.setCallSign(temp[2]);
-        airline.setCountry(temp[3]);
-
-        airlines.insert(airline);
+        Airline airline = Airline(temp[0],temp[1],temp[2],temp[3]);
+        airlines.insert({temp[0],airline});
         temp.clear();
     }
 }
@@ -77,23 +59,18 @@ void loadFlights(vector<Flight>& flights) {
         string eachWord;
 
         while (getline(iss, eachWord, ',')) temp.push_back(eachWord);
-
         Flight flight = Flight(temp[0], temp[1], temp[2]);
         flights.push_back(flight);
         temp.clear();
     }
 }
 
-void loadFlightsToEdges(Graph<string>* &g, const set<Airport>& airports, vector<Flight>& flights) {
+void loadFlightsToEdges(Graph<Airport> &g,const vector<Flight>& flights, const unordered_map<std::string, Airline> &airlines,const unordered_map<std::string ,Airport> &airports) {
     for (Flight flight : flights) {
-        for (auto vertex : g->getVertexSet()) {
-            if (vertex->getInfo().substr(0, 3) == flight.getSource()) {
-                //std::cout << findNameForCode(airports, flight.getSource()) << std::endl;
-                std::string source = flight.getSource() + ',' + findNameForCode(airports, flight.getSource());
-                std::string destination = flight.getTarget() + ',' + findNameForCode(airports, flight.getTarget());
-                g->addEdge(source, destination, 0, flight.getAirlineFromFlight().getCode());
-            }
-        }
+        cout << flight.getAirlineFromFlight() << endl;
+        auto i = g.findVertex(airports.find(flight.getSource())->second);
+        auto d = g.findVertex(airports.find(flight.getTarget())->second);
+        g.addEdge(i->getInfo(),d->getInfo(),0,airlines.find(flight.getAirlineFromFlight())->second);
     }
 }
 
@@ -101,17 +78,17 @@ void loadFlightsToEdges(Graph<string>* &g, const set<Airport>& airports, vector<
 
 
 int main() {
-    Graph<string>* g = new Graph<string>();
-    set<Airport> airports;
-    set<Airline> airlines;
+    Graph<Airport> g;
+    unordered_map<std::string ,Airport> airports;
+    unordered_map<std::string ,Airline> airlines;
     vector<Flight> flights;
     loadAirports(airports);
     loadAirlines(airlines);
     loadFlights(flights);
     loadAirportsToVertices(g, airports);
-    loadFlightsToEdges(g, airports, flights);
-    Menu menu = Menu(g);
-    menu.Base();
+    loadFlightsToEdges(g,flights,airlines,airports);
+    //Menu menu = Menu(g);
+    //menu.Base();
     return 0;
 }
 
