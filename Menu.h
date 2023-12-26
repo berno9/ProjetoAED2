@@ -34,7 +34,15 @@ public:
             pair<int,int> nFlightAirlineInAirport(Airport airport); // 3ii
             map<std::string,int> nFlightPerCity(); // 3iii
             map<std::string,int> nFlightPerAirline(); // 3iii
-            map<std::string,int> airportToCountrys(Airport airport); // 3iv
+            map<std::string,int> airportToCountries(Airport airport); // 3iv
+            map<std::string,int> cityToCountries(std::string city); // 3iv
+            map<std::string,int> nDestinationsAirports(Airport airport); // 3v
+            map<std::string,int> nDestinationsCities(Airport airport); // 3v
+            map<std::string,int> nDestinationsCountries(Airport airport); // 3v
+            map<std::string,int> nReachableDestinationsAirports(Airport airport,int k); // 3vi
+            map<std::string,int> nReachableDestinationsCities(Airport airport,int k); // 3vi
+            map<std::string,int> nReachableDestinationsCountries(Airport airport,int k); // 3vi
+
 
 };
 

@@ -7,7 +7,6 @@
 Menu::Menu(Graph<Airport> *graph) {
     g = graph;
 }
-/*
 void Menu::Base(){
     std::cout<<std::endl;
     std::cout<<std::endl;
@@ -27,7 +26,7 @@ void Menu::Base(){
 
     switch (k){
         case 1:
-        DisplayOptions();
+            DisplayOptions();
     }
     Base();
 }
@@ -112,10 +111,10 @@ void Menu::SourceNo(){
     bool exists = false;
 
     for (auto vertex : g->getVertexSet()) {
-        if (vertex->getInfo().substr(4) == source) {
+        if (vertex->getInfo().getName() == source) {
             exists = true;
             for (auto flight : vertex->getAdj()) {
-                std::cout << "Existe um voo que parte de " << vertex->getInfo().substr(4) << " e que aterra em " << flight.getDest()->getInfo().substr(4) << " pela companhia aérea " << flight.getAirlineOfFlight() << " ." << std::endl;
+                std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
             }
         }
     }
@@ -144,9 +143,9 @@ void Menu::DestNo(){
 
     for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
-            if (flight.getDest()->getInfo().substr(4) == target) {
+            if (flight.getDest()->getInfo().getName() == target) {
                 exists = true;
-                std::cout << "Existe um voo que parte de " << vertex->getInfo().substr(4) << " e que aterra em " << flight.getDest()->getInfo().substr(4) << " pela companhia aérea " << flight.getAirlineOfFlight() << " ." << std::endl;
+                std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
             }
         }
     }
@@ -180,9 +179,9 @@ void Menu::SourceDestNo(){
 
     for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
-            if (vertex->getInfo().substr(4) == source && flight.getDest()->getInfo().substr(4) == target) {
+            if (vertex->getInfo().getName() == source && flight.getDest()->getInfo().getName() == target) {
                 exists = true;
-                std::cout << "Existe um voo que parte de " << vertex->getInfo().substr(4) << " e que aterra em " << flight.getDest()->getInfo().substr(4) << " pela companhia aérea " << flight.getAirlineOfFlight() << " ." << std::endl;
+                std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
             }
         }
     }
@@ -195,7 +194,7 @@ void Menu::allNo(){
     for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             exists = true;
-            std::cout << "Existe um voo que parte de " << vertex->getInfo().substr(4) << " e que aterra em " << flight.getDest()->getInfo().substr(4) << " pela companhia aérea " << flight.getAirlineOfFlight() << " ." << std::endl;
+            std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
         }
     }
     if (!exists) std::cout << "Não existe nenhum voo com essas especificações." << std::endl;
@@ -228,9 +227,9 @@ void Menu::SourceYes(){
 
     for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
-            if (flight.getAirlineOfFlight() == airline && vertex->getInfo().substr(4) == source) {
+            if (flight.getAirlineOfFlight().getName() == airline && vertex->getInfo().getName() == source) {
                 exists = true;
-                std::cout << "Existe um voo que parte de " << vertex->getInfo().substr(4) << " e que aterra em " << flight.getDest()->getInfo().substr(4) << " pela companhia aérea " << flight.getAirlineOfFlight() << " ." << std::endl;
+                std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
             }
         }
     }
@@ -264,9 +263,9 @@ void Menu::DestYes(){
 
     for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
-            if (flight.getAirlineOfFlight() == airline && flight.getDest()->getInfo().substr(4) == target) {
+            if (flight.getAirlineOfFlight().getName() == airline && flight.getDest()->getInfo().getName()== target) {
                 exists = true;
-                std::cout << "Existe um voo que parte de " << vertex->getInfo().substr(4) << " e que aterra em " << flight.getDest()->getInfo().substr(4) << " pela companhia aérea " << flight.getAirlineOfFlight() << " ." << std::endl;
+                std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
             }
         }
     }
@@ -305,9 +304,9 @@ void Menu::SourceDestYes(){
 
     for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
-            if (flight.getAirlineOfFlight() == airline && vertex->getInfo().substr(4) == source && flight.getDest()->getInfo().substr(4) == target) {
+            if (flight.getAirlineOfFlight().getName() == airline && vertex->getInfo().getName() == source && flight.getDest()->getInfo().getName() == target) {
                 exists = true;
-                std::cout << "Existe um voo que parte de " << vertex->getInfo().substr(4) << " e que aterra em " << flight.getDest()->getInfo().substr(4) << " pela companhia aérea " << flight.getAirlineOfFlight() << " ." << std::endl;
+                std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
             }
         }
     }
@@ -336,17 +335,18 @@ void Menu::allYes() {
 
     for (auto vertex : g->getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
-            if (flight.getAirlineOfFlight() == airline) {
+            if (flight.getAirlineOfFlight().getName() == airline) {
                 exists = true;
-                std::cout << "Existe um voo que parte de " << vertex->getInfo().substr(4) << " e que aterra em " << flight.getDest()->getInfo().substr(4) << " pela companhia aérea " << flight.getAirlineOfFlight() << " ." << std::endl;
+                std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
             }
         }
     }
     if (!exists) std::cout << "Não existe nenhum voo com essas especificações." << std::endl;
     DisplayOptions();
-}*/
+}
+
+
 /////// Fim do 1 /////////////////
-// 3i
 int Menu::numberOfAirports() {
     return g->getNumVertex();
 }
@@ -357,7 +357,6 @@ int Menu::numberOfFlights() {
     }
     return c;
 }
-// 3ii
 pair<int,int> Menu::nFlightAirlineInAirport(Airport airport){
    set<Airline> airlines;
    auto a = g->findVertex(airport);
@@ -366,7 +365,6 @@ pair<int,int> Menu::nFlightAirlineInAirport(Airport airport){
    }
    return {a->getAdj().size(),airlines.size()};
 }
-// 3iii
 map<std::string,int> Menu::nFlightPerCity(){
     map<std::string,int> contagem;
     for (auto v : g->getVertexSet()){
@@ -385,7 +383,7 @@ map<std::string,int> Menu::nFlightPerAirline(){
     }
     return contagem;
 }
-map<std::string,int> Menu::airportToCountrys(Airport airport){
+map<std::string,int> Menu::airportToCountries(Airport airport){
     auto a = g->findVertex(airport);
     map<std::string,int> contagem;
     for (auto d : a->getAdj()){
@@ -393,4 +391,103 @@ map<std::string,int> Menu::airportToCountrys(Airport airport){
     }
     return contagem;
 }
+map<std::string,int> Menu::cityToCountries(std::string city){
+    map<std::string,int> contagem;
+    for (auto v : g->getVertexSet()){
+        if (v->getInfo().getCity() == city){
+            for (auto d : v->getAdj()){
+                contagem[d.getDest()->getInfo().getCountry()]++;
+            }
+        }
+    }
+    return  contagem;
+}
+map<std::string,int> Menu::nDestinationsAirports(Airport airport){
+    map<std::string,int> contagem;
+    for (auto v : g->findVertex(airport)->getAdj()){
+        contagem[v.getDest()->getInfo().getCode()]++;
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nDestinationsCities(Airport airport){
+    map<std::string,int> contagem;
+    for (auto v : g->findVertex(airport)->getAdj()){
+        contagem[v.getDest()->getInfo().getCity()]++;
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nDestinationsCountries(Airport airport){
+    map<std::string,int> contagem;
+    for (auto v : g->findVertex(airport)->getAdj()){
+        contagem[v.getDest()->getInfo().getCountry()]++;
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nReachableDestinationsAirports(Airport airport,int k){
+    map<std::string,int> contagem;
+    queue<Vertex<Airport>*> temp;
+    queue<Vertex<Airport>*> temp2;
+    for (auto v : g->getVertexSet())v->setVisited(false);
+    temp.push(g->findVertex(airport)); // Inicial vertex put in the queue
+    while (!temp.empty() && k > 0){
+        for (auto v : temp.front()->getAdj()){
+            if (!v.getDest()->isVisited()){
+                temp2.push(v.getDest());
+                contagem[v.getDest()->getInfo().getCode()]++;
+                v.getDest()->setVisited(true);
+            }
+        }
+        temp.pop();
+        if (temp.empty()){ // This means we have changed level
+            k--;
+            temp = temp2;
+        }
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nReachableDestinationsCities(Airport airport,int k){
+    map<std::string,int> contagem;
+    queue<Vertex<Airport>*> temp;
+    queue<Vertex<Airport>*> temp2;
+    for (auto v : g->getVertexSet())v->setVisited(false);
+    temp.push(g->findVertex(airport)); // Inicial vertex put in the queue
+    while (!temp.empty() && k > 0){
+        for (auto v : temp.front()->getAdj()){
+            if (!v.getDest()->isVisited()){
+                temp2.push(v.getDest());
+                contagem[v.getDest()->getInfo().getCity()]++;
+                v.getDest()->setVisited(true);
+            }
+        }
+        temp.pop();
+        if (temp.empty()){ // This means we have changed level
+            k--;
+            temp = temp2;
+        }
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nReachableDestinationsCountries(Airport airport,int k){
+    map<std::string,int> contagem;
+    queue<Vertex<Airport>*> temp;
+    queue<Vertex<Airport>*> temp2;
+    for (auto v : g->getVertexSet())v->setVisited(false);
+    temp.push(g->findVertex(airport)); // Inicial vertex put in the queue
+    while (!temp.empty() && k > 0){
+        for (auto v : temp.front()->getAdj()){
+            if (!v.getDest()->isVisited()){
+                temp2.push(v.getDest());
+                contagem[v.getDest()->getInfo().getCity()]++;
+                v.getDest()->setVisited(true);
+            }
+        }
+        temp.pop();
+        if (temp.empty()){ // This means we have changed level
+            k--;
+            temp = temp2;
+        }
+    }
+    return contagem;
+}
+
 
