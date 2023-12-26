@@ -7,6 +7,7 @@
 Menu::Menu(Graph<Airport> *graph) {
     g = graph;
 }
+
 void Menu::Base(){
     std::cout<<std::endl;
     std::cout<<std::endl;
@@ -110,6 +111,7 @@ void Menu::SourceNo(){
     if (source == "0") DisplayOptions();
     bool exists = false;
 
+
     for (auto vertex : g->getVertexSet()) {
         if (vertex->getInfo().getName() == source) {
             exists = true;
@@ -141,7 +143,7 @@ void Menu::DestNo(){
     if (target == "0") DisplayOptions();
     bool exists = false;
 
-    for (auto vertex : g->getVertexSet()) {
+    for (auto vertex : g.getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getDest()->getInfo().getName() == target) {
                 exists = true;
@@ -177,7 +179,7 @@ void Menu::SourceDestNo(){
     std::cin>>target;
     bool exists = false;
 
-    for (auto vertex : g->getVertexSet()) {
+    for (auto vertex : g.getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (vertex->getInfo().getName() == source && flight.getDest()->getInfo().getName() == target) {
                 exists = true;
@@ -191,7 +193,7 @@ void Menu::SourceDestNo(){
 
 void Menu::allNo(){
     bool exists = false;
-    for (auto vertex : g->getVertexSet()) {
+    for (auto vertex : g.getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             exists = true;
             std::cout << "Existe um voo que parte de " << vertex->getInfo().getName() << " e que aterra em " << flight.getDest()->getInfo().getName() << " pela companhia aérea " << flight.getAirlineOfFlight().getName() << " ." << std::endl;
@@ -225,7 +227,7 @@ void Menu::SourceYes(){
     std::cin>>source;
     bool exists = false;
 
-    for (auto vertex : g->getVertexSet()) {
+    for (auto vertex : g.getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getAirlineOfFlight().getName() == airline && vertex->getInfo().getName() == source) {
                 exists = true;
@@ -261,7 +263,7 @@ void Menu::DestYes(){
     std::cin>>target;
     bool exists = false;
 
-    for (auto vertex : g->getVertexSet()) {
+    for (auto vertex : g.getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getAirlineOfFlight().getName() == airline && flight.getDest()->getInfo().getName()== target) {
                 exists = true;
@@ -302,7 +304,7 @@ void Menu::SourceDestYes(){
     std::cin>>target;
     bool exists = false;
 
-    for (auto vertex : g->getVertexSet()) {
+    for (auto vertex : g.getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getAirlineOfFlight().getName() == airline && vertex->getInfo().getName() == source && flight.getDest()->getInfo().getName() == target) {
                 exists = true;
@@ -333,7 +335,7 @@ void Menu::allYes() {
     if (airline == "0") DisplayOptions();
     bool exists = false;
 
-    for (auto vertex : g->getVertexSet()) {
+    for (auto vertex : g.getVertexSet()) {
         for (auto flight : vertex->getAdj()) {
             if (flight.getAirlineOfFlight().getName() == airline) {
                 exists = true;
@@ -344,8 +346,6 @@ void Menu::allYes() {
     if (!exists) std::cout << "Não existe nenhum voo com essas especificações." << std::endl;
     DisplayOptions();
 }
-
-
 /////// Fim do 1 /////////////////
 int Menu::numberOfAirports() {
     return g->getNumVertex();
@@ -489,5 +489,5 @@ map<std::string,int> Menu::nReachableDestinationsCountries(Airport airport,int k
     }
     return contagem;
 }
-
+}
 

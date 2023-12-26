@@ -42,8 +42,6 @@ public:
             map<std::string,int> nReachableDestinationsAirports(Airport airport,int k); // 3vi
             map<std::string,int> nReachableDestinationsCities(Airport airport,int k); // 3vi
             map<std::string,int> nReachableDestinationsCountries(Airport airport,int k); // 3vi
-
-
 };
 
 
