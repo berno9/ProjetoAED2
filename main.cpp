@@ -67,7 +67,6 @@ void loadFlights(vector<Flight>& flights) {
 
 void loadFlightsToEdges(Graph<Airport> &g,const vector<Flight>& flights, const unordered_map<std::string, Airline> &airlines,const unordered_map<std::string ,Airport> &airports) {
     for (Flight flight : flights) {
-        cout << flight.getAirlineFromFlight() << endl;
         auto i = g.findVertex(airports.find(flight.getSource())->second);
         auto d = g.findVertex(airports.find(flight.getTarget())->second);
         g.addEdge(i->getInfo(),d->getInfo(),0,airlines.find(flight.getAirlineFromFlight())->second);
@@ -87,7 +86,11 @@ int main() {
     loadFlights(flights);
     loadAirportsToVertices(g, airports);
     loadFlightsToEdges(g,flights,airlines,airports);
-    //Menu menu = Menu(g);
+    Menu menu = Menu(&g);
+    auto k = menu.nCountriesGivenAirport(airports.find("ORY")->second);
+    for (auto p : k){
+        cout<<p.first << " : " << p.second << endl;
+    }
     //menu.Base();
     return 0;
 }

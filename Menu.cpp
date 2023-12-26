@@ -1,14 +1,13 @@
 //
 // Created by User on 23/12/2023.
 //
-/*
+
 #include "Menu.h"
 
-Menu::Menu(Graph<Airport> g) {
-    this->g = g;
+Menu::Menu(Graph<Airport> *graph) {
+    g = graph;
 }
-
-
+/*
 void Menu::Base(){
     std::cout<<std::endl;
     std::cout<<std::endl;
@@ -345,8 +344,53 @@ void Menu::allYes() {
     }
     if (!exists) std::cout << "Não existe nenhum voo com essas especificações." << std::endl;
     DisplayOptions();
+}*/
+/////// Fim do 1 /////////////////
+// 3i
+int Menu::numberOfAirports() {
+    return g->getNumVertex();
+}
+int Menu::numberOfFlights() {
+    int c = 0;
+    for (auto v : g->getVertexSet()){
+        c += v->getAdj().size();
+    }
+    return c;
+}
+// 3ii
+pair<int,int> Menu::nFlightAirlineInAirport(Airport airport){
+   set<Airline> airlines;
+   auto a = g->findVertex(airport);
+   for (auto d : a->getAdj()){
+       airlines.insert(d.getAirlineOfFlight());
+   }
+   return {a->getAdj().size(),airlines.size()};
+}
+// 3iii
+map<std::string,int> Menu::nFlightPerCity(){
+    map<std::string,int> contagem;
+    for (auto v : g->getVertexSet()){
+        std::string city = v->getInfo().getCity();
+        contagem[city]++;
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nFlightPerAirline(){
+    map<std::string,int> contagem;
+    for (auto v : g->getVertexSet()){
+        for (auto f : v->getAdj()){
+            std::string airline = f.getAirlineOfFlight().getCode();
+            contagem[airline]++;
+        }
+    }
+    return contagem;
+}
+map<std::string,int> Menu::airportToCountrys(Airport airport){
+    auto a = g->findVertex(airport);
+    map<std::string,int> contagem;
+    for (auto d : a->getAdj()){
+        contagem[d.getDest()->getInfo().getCountry()]++;
+    }
+    return contagem;
 }
 
-
-/////// Fim do 1 /////////////////
-*/

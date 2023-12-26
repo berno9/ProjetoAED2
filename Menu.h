@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <set>
+#include <map>
 #include "Graph.h"
 #include "Airport.h"
 #include "Airline.h"
@@ -15,9 +16,9 @@
 
 class Menu {
 private:
-    Graph<Airport> g;
+    Graph<Airport> *g;
 public:
-    Menu(Graph<Airport> g);
+    Menu(Graph<Airport> *graph);
     void Base();
         void DisplayOptions();
             void SourceNo();
@@ -28,6 +29,13 @@ public:
             void DestYes();
             void SourceDestYes();
             void allYes();
+            int numberOfAirports(); // 3i
+            int numberOfFlights(); // 3i
+            pair<int,int> nFlightAirlineInAirport(Airport airport); // 3ii
+            map<std::string,int> nFlightPerCity(); // 3iii
+            map<std::string,int> nFlightPerAirline(); // 3iii
+            map<std::string,int> airportToCountrys(Airport airport); // 3iv
+
 };
 
 
