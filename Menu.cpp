@@ -4,10 +4,9 @@
 
 #include "Menu.h"
 
-Menu::Menu(Graph<Airport> g) {
-    this->g = g;
+Menu::Menu(Graph<Airport> *graph) {
+    g = graph;
 }
-
 
 void Menu::Base(){
     std::cout<<std::endl;
@@ -28,7 +27,7 @@ void Menu::Base(){
 
     switch (k){
         case 1:
-        DisplayOptions();
+            DisplayOptions();
     }
     Base();
 }
@@ -112,7 +111,8 @@ void Menu::SourceNo(){
     if (source == "0") DisplayOptions();
     bool exists = false;
 
-    for (auto vertex : g.getVertexSet()) {
+
+    for (auto vertex : g->getVertexSet()) {
         if (vertex->getInfo().getName() == source) {
             exists = true;
             for (auto flight : vertex->getAdj()) {
@@ -346,6 +346,148 @@ void Menu::allYes() {
     if (!exists) std::cout << "Não existe nenhum voo com essas especificações." << std::endl;
     DisplayOptions();
 }
-
-
 /////// Fim do 1 /////////////////
+int Menu::numberOfAirports() {
+    return g->getNumVertex();
+}
+int Menu::numberOfFlights() {
+    int c = 0;
+    for (auto v : g->getVertexSet()){
+        c += v->getAdj().size();
+    }
+    return c;
+}
+pair<int,int> Menu::nFlightAirlineInAirport(Airport airport){
+   set<Airline> airlines;
+   auto a = g->findVertex(airport);
+   for (auto d : a->getAdj()){
+       airlines.insert(d.getAirlineOfFlight());
+   }
+   return {a->getAdj().size(),airlines.size()};
+}
+map<std::string,int> Menu::nFlightPerCity(){
+    map<std::string,int> contagem;
+    for (auto v : g->getVertexSet()){
+        std::string city = v->getInfo().getCity();
+        contagem[city]++;
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nFlightPerAirline(){
+    map<std::string,int> contagem;
+    for (auto v : g->getVertexSet()){
+        for (auto f : v->getAdj()){
+            std::string airline = f.getAirlineOfFlight().getCode();
+            contagem[airline]++;
+        }
+    }
+    return contagem;
+}
+map<std::string,int> Menu::airportToCountries(Airport airport){
+    auto a = g->findVertex(airport);
+    map<std::string,int> contagem;
+    for (auto d : a->getAdj()){
+        contagem[d.getDest()->getInfo().getCountry()]++;
+    }
+    return contagem;
+}
+map<std::string,int> Menu::cityToCountries(std::string city){
+    map<std::string,int> contagem;
+    for (auto v : g->getVertexSet()){
+        if (v->getInfo().getCity() == city){
+            for (auto d : v->getAdj()){
+                contagem[d.getDest()->getInfo().getCountry()]++;
+            }
+        }
+    }
+    return  contagem;
+}
+map<std::string,int> Menu::nDestinationsAirports(Airport airport){
+    map<std::string,int> contagem;
+    for (auto v : g->findVertex(airport)->getAdj()){
+        contagem[v.getDest()->getInfo().getCode()]++;
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nDestinationsCities(Airport airport){
+    map<std::string,int> contagem;
+    for (auto v : g->findVertex(airport)->getAdj()){
+        contagem[v.getDest()->getInfo().getCity()]++;
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nDestinationsCountries(Airport airport){
+    map<std::string,int> contagem;
+    for (auto v : g->findVertex(airport)->getAdj()){
+        contagem[v.getDest()->getInfo().getCountry()]++;
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nReachableDestinationsAirports(Airport airport,int k){
+    map<std::string,int> contagem;
+    queue<Vertex<Airport>*> temp;
+    queue<Vertex<Airport>*> temp2;
+    for (auto v : g->getVertexSet())v->setVisited(false);
+    temp.push(g->findVertex(airport)); // Inicial vertex put in the queue
+    while (!temp.empty() && k > 0){
+        for (auto v : temp.front()->getAdj()){
+            if (!v.getDest()->isVisited()){
+                temp2.push(v.getDest());
+                contagem[v.getDest()->getInfo().getCode()]++;
+                v.getDest()->setVisited(true);
+            }
+        }
+        temp.pop();
+        if (temp.empty()){ // This means we have changed level
+            k--;
+            temp = temp2;
+        }
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nReachableDestinationsCities(Airport airport,int k){
+    map<std::string,int> contagem;
+    queue<Vertex<Airport>*> temp;
+    queue<Vertex<Airport>*> temp2;
+    for (auto v : g->getVertexSet())v->setVisited(false);
+    temp.push(g->findVertex(airport)); // Inicial vertex put in the queue
+    while (!temp.empty() && k > 0){
+        for (auto v : temp.front()->getAdj()){
+            if (!v.getDest()->isVisited()){
+                temp2.push(v.getDest());
+                contagem[v.getDest()->getInfo().getCity()]++;
+                v.getDest()->setVisited(true);
+            }
+        }
+        temp.pop();
+        if (temp.empty()){ // This means we have changed level
+            k--;
+            temp = temp2;
+        }
+    }
+    return contagem;
+}
+map<std::string,int> Menu::nReachableDestinationsCountries(Airport airport,int k){
+    map<std::string,int> contagem;
+    queue<Vertex<Airport>*> temp;
+    queue<Vertex<Airport>*> temp2;
+    for (auto v : g->getVertexSet())v->setVisited(false);
+    temp.push(g->findVertex(airport)); // Inicial vertex put in the queue
+    while (!temp.empty() && k > 0){
+        for (auto v : temp.front()->getAdj()){
+            if (!v.getDest()->isVisited()){
+                temp2.push(v.getDest());
+                contagem[v.getDest()->getInfo().getCity()]++;
+                v.getDest()->setVisited(true);
+            }
+        }
+        temp.pop();
+        if (temp.empty()){ // This means we have changed level
+            k--;
+            temp = temp2;
+        }
+    }
+    return contagem;
+}
+}
+
