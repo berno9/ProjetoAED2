@@ -18,7 +18,10 @@ private:
     double longitude;
 public:
     bool operator<(const Airport& other) const {return code < other.code;}
-    Airport(std::string name_);
+    bool operator==(const Airport &other);
+    Airport();
+    Airport(const Airport &other);
+    Airport(std::string code,std::string name,std::string city,std::string country,double latitude,double longitude);
     void setCode(std::string code_);
     void setName(std::string name_);
     void setCity(std::string city_);

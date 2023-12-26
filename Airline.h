@@ -17,6 +17,7 @@ private:
 public:
     bool operator<(const Airline& other) const {return code < other.code;}
     Airline(std::string name_);
+    Airline(std::string code,std::string name,std::string callSign,std::string country);
     void setCode(std::string code_);
     void setName(std::string name_);
     void setCallSign(std::string callSign_);

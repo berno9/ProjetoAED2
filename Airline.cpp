@@ -5,6 +5,12 @@
 #include "Airline.h"
 
 Airline::Airline(std::string name_) : name(name_) {}
+Airline::Airline(std::string code,std::string name,std::string callSign,std::string country){
+    this->code = code;
+    this->name = name;
+    this->callSign = callSign;
+    this->country = country;
+}
 
 void Airline::setCode(std::string code_) {
     code = code_;

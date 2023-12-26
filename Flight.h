@@ -13,13 +13,13 @@ class Flight {
 private:
     std::string source;
     std::string target;
-    Airline airline;
+    std::string airline;
 public:
     bool operator<(const Flight& other) const {return source < other.source;}
-    Flight(std::string source_, std::string target_, Airline airline1);
+    Flight(std::string source_, std::string target_, std::string airline1);
     std::string getSource();
     std::string getTarget();
-    Airline getAirlineFromFlight();
+    std::string getAirlineFromFlight();
 };
 
 
