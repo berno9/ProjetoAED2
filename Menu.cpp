@@ -346,10 +346,119 @@ void Menu::allYes() {
     DisplayOptions();
 }*/
 /////// Fim do 1 /////////////////
+
+//Interface inicial:
+
+
+void Menu::secBase(){
+
+    std::cout << std::endl;
+    std::cout << "########################################################################################################" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##   Consultar:                                                                                       ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      1- Numero de aeroportos:                                                                      ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      2- Numero de voos de partida de um aeroporto e numero de companhias aereas                    ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      3- Numero de voos por cidade/companhia aerea:                                                 ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      4- Numero de paises destino com partida num aeroporto/cidade:                                 ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      5- Numero de destinos disponiveis com partida num aeroporto:                                  ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      6- Numero de destinos alcancaveis a partir de um aeroporto com um maximo de X escalas:        ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      7- Viagem com maior numero de escalas:                                                        ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      8- Os k principais aeroportos com maior capacidade de trafego aereo:                          ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      9- Identificar os aeroportos essenciais para a capacidade de circulacao da rede:              ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "##      0 -> Sair                                                                                     ##" << std::endl;
+    std::cout << "##                                                                                                    ##" << std::endl;
+    std::cout << "########################################################################################################" << std::endl << std::endl;
+
+    int k;
+    std::cout<<"Opcao: ";
+    std::cin>>k;
+            switch (k) {
+                case 0:
+                    std::cout << "A sair ..." << std::endl;
+                    break;
+                case 1:
+                    numberOfAirportsInterface();
+                    break;
+                case 2:
+                    // Lógica para a opção 2
+                    std::cout << "Opcao 2 selecionada" << std::endl;
+                    break;
+                case 3:
+                    // Lógica para a opção 3
+                    std::cout << "Opcao 3 selecionada" << std::endl;
+                    break;
+                case 4:
+                    // Lógica para a opção 4
+                    std::cout << "Opcao 4 selecionada" << std::endl;
+                    break;
+                case 5:
+                    // Lógica para a opção 5
+                    std::cout << "Opcao 5 selecionada" << std::endl;
+                    break;
+                case 6:
+                    // Lógica para a opção 6
+                    std::cout << "Opcao 6 selecionada" << std::endl;
+                    break;
+                case 7:
+                    // Lógica para a opção 7
+                    std::cout << "Opcao 7 selecionada" << std::endl;
+                    break;
+                case 8:
+                    // Lógica para a opção 8
+                    std::cout << "Opcao 8 selecionada" << std::endl;
+                    break;
+                case 9:
+                    // Lógica para a opção 9
+                    std::cout << "Opcao 9 selecionada" << std::endl;
+                    break;
+                default:
+                    std::cout << "Opcao invalida. Por favor, escolha uma opcao valida." << std::endl;
+                    break;
+            }
+            secBase();
+        }
+
+//3i interface
+void Menu::numberOfAirportsInterface() {
+    std::cout<<std::endl<<std::endl;
+    std::cout<<"#######################################################################"<<std::endl;
+    std::cout<<"##                                                                   ##"<<std::endl;
+    std::cout<<"##    Numero de aeroportos:" <<numberOfAirports()<<"                                      ##"<<std::endl;
+    std::cout<<"##                                                                   ##"<<std::endl;
+    std::cout<<"##      0 -> Voltar                                                  ##"<<std::endl;
+    std::cout<<"##                                                                   ##"<<std::endl;
+    std::cout<<"#######################################################################"<<std::endl<<std::endl;
+
+    int k;
+    std::cout<<"Voltar?: ";
+    std::cin>>k;
+    switch (k) {
+        case 0:
+            std::cout << std::endl << "A sair ..." << std::endl;
+            secBase();
+            break;
+        default:
+            std::cout << "Opcao invalida. Por favor, escolha uma opcao valida." << std::endl;
+            numberOfAirportsInterface();
+    }
+}
+
 // 3i
 int Menu::numberOfAirports() {
     return g->getNumVertex();
 }
+
 int Menu::numberOfFlights() {
     int c = 0;
     for (auto v : g->getVertexSet()){
@@ -357,6 +466,41 @@ int Menu::numberOfFlights() {
     }
     return c;
 }
+
+void Menu::nFlightAirlineInAirportInterface(){
+
+    std::cout<<std::endl<<std::endl;
+    std::cout<<"#############################################################################"<<std::endl;
+    std::cout<<"##                                                                         ##"<<std::endl;
+    std::cout<<"##     Voos de partida de um aeroporto e numero de companhias aereas:      ##"<<std::endl;
+    std::cout<<"##                                                                         ##"<<std::endl;
+    std::cout<<"##     Introduza o aeroporto:_______                                       ##"<<std::endl;
+    std::cout<<"##                                                                         ##"<<std::endl;
+    std::cout<<"##     0 -> Voltar                                                         ##"<<std::endl;
+    std::cout<<"##                                                                         ##"<<std::endl;
+    std::cout<<"#############################################################################"<<std::endl<<std::endl;
+
+    Airport airport;
+    std::cout<<"Aeroporto:";
+    int k;
+    std::cin >> k;
+
+    //if airport exists k = 1 else k = 2
+
+    switch (k) {
+        case 0:
+            std::cout << std::endl << "A sair ..." << std::endl;
+            secBase();
+            break;
+        default:
+
+            //nFlightAirlineInAirport(k);
+            std::cout << "Opcao invalida. Por favor, escolha uma opcao valida." << std::endl;
+            numberOfAirportsInterface();
+    }
+}
+
+
 // 3ii
 pair<int,int> Menu::nFlightAirlineInAirport(Airport airport){
    set<Airline> airlines;

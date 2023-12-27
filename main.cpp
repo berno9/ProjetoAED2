@@ -87,11 +87,11 @@ int main() {
     loadAirportsToVertices(g, airports);
     loadFlightsToEdges(g,flights,airlines,airports);
     Menu menu = Menu(&g);
-    auto k = menu.nCountriesGivenAirport(airports.find("ORY")->second);
-    for (auto p : k){
-        cout<<p.first << " : " << p.second << endl;
-    }
-    //menu.Base();
+    //auto k = menu.nFlightAirlineInAirport(airports.find("ORY")->second);
+    //for (auto p : k){
+    //    cout<<p.first << " : " << p.second << endl;
+    //}
+    menu.secBase();
     return 0;
 }
 

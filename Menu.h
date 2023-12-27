@@ -29,9 +29,14 @@ public:
             void DestYes();
             void SourceDestYes();
             void allYes();
-            int numberOfAirports(); // 3i
-            int numberOfFlights(); // 3i
-            pair<int,int> nFlightAirlineInAirport(Airport airport); // 3ii
+
+        void secBase();
+            void numberOfAirportsInterface();
+                int numberOfAirports(); // 3i
+                int numberOfFlights(); // 3i
+            void nFlightAirlineInAirportInterface();
+                pair<int,int> nFlightAirlineInAirport(Airport airport); // 3ii
+
             map<std::string,int> nFlightPerCity(); // 3iii
             map<std::string,int> nFlightPerAirline(); // 3iii
             map<std::string,int> airportToCountrys(Airport airport); // 3iv
