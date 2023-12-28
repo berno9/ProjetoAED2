@@ -12,6 +12,7 @@
 #include <list>
 #include <unordered_set>
 #include "Airline.h"
+#include "Flight.h"
 
 using namespace std;
 
@@ -31,10 +32,14 @@ class Vertex {
     int indegree;          // auxiliary field
     int num;               // auxiliary field
     int low;               // auxiliary field
+    vector<Flight> flightBefore;
 
     void addEdge(Vertex<T> *dest, double w, const Airline a);
     bool removeEdgeTo(Vertex<T> *d);
 public:
+    vector<Flight> getFlights(){return flightBefore;}
+    void addFlight(Flight a){flightBefore.push_back(a);}
+    void setFEmpty(){flightBefore.clear();}
     Vertex(T in);
     T getInfo() const;
     void setInfo(T in);

@@ -1,0 +1,3 @@
+C:/Users/Alexandre/Desktop/Paed2/cmake-build-debug/CMakeFiles/ProjetoAED5.dir
+C:/Users/Alexandre/Desktop/Paed2/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Alexandre/Desktop/Paed2/cmake-build-debug/CMakeFiles/rebuild_cache.dir

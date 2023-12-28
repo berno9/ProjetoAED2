@@ -519,49 +519,156 @@ std::vector<pair<Airport, int>> Menu::nGreatestAirTrafficCapacity(int k) {
     return highest;
 }
 
-void dfs_art(Graph<Airport>* g, Vertex<Airport>* v, std::stack<Airport>& s, std::unordered_set<std::string>& res, std::unordered_set<std::string>& visited, int& i) {
-    v->setNum(i);
-    v->setLow(i);
-    i++;
-
-    s.push(v->getInfo());
-    visited.insert(v->getInfo().getCode());
-
-    for (const auto& edge : v->getAdj()) {
-        Vertex<Airport>* neighbor = edge.getDest();
-
-        if (visited.find(neighbor->getInfo().getCode()) == visited.end()) {
-            dfs_art(g, neighbor, s, res, visited, i);
-            v->setLow(std::min(v->getLow(), neighbor->getLow()));
-
-            if (v->getNum() <= neighbor->getLow()) {
-                if (!s.empty()) {
-                    res.insert(s.top().getCode());
-                    s.pop();
-                }
-                while (!s.empty() && s.top().getCode() != v->getInfo().getCode()) {
-                    res.insert(s.top().getCode());
-                    s.pop();
-                }
-            }
-        } else {
-            v->setLow(std::min(v->getLow(), neighbor->getNum()));
+void dfs_art(Vertex<Airport>* v,  set<std::string> &res,int &index) {
+    v->setNum(index);
+    v->setLow(index);
+    index++;
+    v->setProcessing(true);
+    for (auto w : v->getAdj()){
+        auto neighbor = w.getDest();
+        if (neighbor->getNum() == 0){
+            dfs_art(neighbor,res,index);
+            v->setLow(min(v->getLow(),neighbor->getLow()));
+            if (neighbor->getLow() >= v->getNum())res.insert(v->getInfo().getCode());
+        }else if (neighbor->isProcessing()){
+            v->setLow(min(v->getLow(),neighbor->getNum()));
         }
     }
+    v->setProcessing(false);
 }
 
-std::unordered_set<std::string> Menu::essentialAirports() {
-    std::unordered_set<std::string> result;
-    std::stack<Airport> stack;
-    std::unordered_set<std::string> visited;
-
-    int i = 0; // Variable to assign discovery time to vertices
-
+set<std::string> Menu::essentialAirports() {
+    set<std::string> res;
+    int i = 0; // Contagem
+    for (auto vertex : g->getVertexSet())vertex->setProcessing(false);
     for (auto vertex : g->getVertexSet()) {
-        if (visited.find(vertex->getInfo().getCode()) == visited.end()) {
-            dfs_art(g, vertex, stack, result, visited, i);
+        if (vertex->getNum() == 0){
+            dfs_art(vertex,res,i);
         }
     }
-    return result;
+    return res;
 }
+bool inStack(queue<Vertex<Airport> *> q,Vertex<Airport> * a){
+    while (!q.empty()){
+        if (a == q.front())return true;
+        q.pop();
+    }
+    return false;
+}
+vector<vector<Flight>> Menu::AirportToAirport(Airport a, Airport b){
+    auto v = g->findVertex(a);
+    vector<vector<Flight>> res;
+    queue<Vertex<Airport> *> q;
+    queue<Vertex<Airport> *> q2;
+    for (auto k : g->getVertexSet()){
+        k->setVisited(false);
+        k->setFEmpty();
+    }
+    q.push(v);
+    v->setVisited(true);
+    bool isFound = false;
+    while (!q.empty()) {
+        auto v = q.front();
+        q.pop();
+        for (auto & e : v->getAdj()) {
+            auto w = e.getDest();
+            if (!w->isVisited() && !inStack(q,w)){
+                w->setFEmpty();
+                for (auto f : v->getFlights()){w->addFlight(f);}
+                w->addFlight(Flight(v->getInfo().getCode(),w->getInfo().getCode(),e.getAirlineOfFlight().getCode()));
+                if (w->getInfo().getCode() == b.getCode()){
+                    isFound = true;
+                    res.push_back(w->getFlights());
+                }
+                q2.push(w);
+            }
+        }
+        v->setVisited(true);
+        if (q.empty()){
+            if(isFound)break;
+            q = q2;
+            while (!q2.empty())q2.pop();
+        }
+    }
+    return res;
+}
+
+vector<vector<Flight>> Menu::CityToCity(std::string a, std::string b){
+    vector<vector<Flight>> res;
+    queue<Vertex<Airport> *> q;
+    queue<Vertex<Airport> *> q2;
+    for (auto k : g->getVertexSet()){
+        k->setVisited(false);
+        k->setFEmpty();
+        if (k->getInfo().getCity() == a)q.push(k);
+    }
+    bool isFound = false;
+    while (!q.empty()) {
+        auto v = q.front();
+        q.pop();
+        for (auto & e : v->getAdj()) {
+            auto w = e.getDest();
+            if (!w->isVisited() && !inStack(q,w)){
+                w->setFEmpty();
+                for (auto f : v->getFlights()){w->addFlight(f);}
+                w->addFlight(Flight(v->getInfo().getCode(),w->getInfo().getCode(),e.getAirlineOfFlight().getCode()));
+                if (w->getInfo().getCity() == b){
+                    isFound = true;
+                    res.push_back(w->getFlights());
+                }
+                q2.push(w);
+            }
+        }
+        v->setVisited(true);
+        if (q.empty()){
+            if(isFound)break;
+            q = q2;
+            while (!q2.empty())q2.pop();
+        }
+    }
+    return res;
+}
+bool inVector(vector<std::string> airlines, std::string s){
+    for (auto a : airlines)if (a == s)return true;
+    return false;
+}
+vector<vector<Flight>> Menu::AirportToAirportWF(Airport a, Airport b,vector<std::string> airlines){
+    auto v = g->findVertex(a);
+    vector<vector<Flight>> res;
+    queue<Vertex<Airport> *> q;
+    queue<Vertex<Airport> *> q2;
+    for (auto k : g->getVertexSet()){
+        k->setVisited(false);
+        k->setFEmpty();
+    }
+    q.push(v);
+    v->setVisited(true);
+    bool isFound = false;
+    while (!q.empty()) {
+        auto v = q.front();
+        q.pop();
+        for (auto & e : v->getAdj()) {
+            auto w = e.getDest();
+            if (!w->isVisited() && !inStack(q,w) && !inVector(airlines,e.getAirlineOfFlight().getCode())){
+                w->setFEmpty();
+                for (auto f : v->getFlights()){w->addFlight(f);}
+                w->addFlight(Flight(v->getInfo().getCode(),w->getInfo().getCode(),e.getAirlineOfFlight().getCode()));
+                if (w->getInfo().getCode() == b.getCode()){
+                    isFound = true;
+                    res.push_back(w->getFlights());
+                }
+                q2.push(w);
+            }
+        }
+        v->setVisited(true);
+        if (q.empty()){
+            if(isFound)break;
+            q = q2;
+            while (!q2.empty())q2.pop();
+        }
+    }
+    return res;
+}
+
+
 
