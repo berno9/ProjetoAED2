@@ -87,12 +87,6 @@ int main() {
     loadAirportsToVertices(g, airports);
     loadFlightsToEdges(g,flights,airlines,airports);
     Menu menu = Menu(&g);
-    auto p = menu.AirportToAirportWF(airports.find("CIY")->second,airports.find("OPO")->second,{});
-    for (auto v : p){
-        for (auto k : v)cout << k.getSource() <<","<<  k.getTarget() <<","<<k.getAirlineFromFlight() << endl;
-        cout << "Number of Stops : " << v.size() << endl;
-    }
-    cout << "There are " << p.size() << " options of flies";
     //menu.Base();
     return 0;
 }

@@ -36,7 +36,6 @@ public:
             map<std::string,int> nFlightPerAirline(); // 3iii
             map<std::string,int> airportToCountries(Airport airport); // 3iv
             map<std::string,int> cityToCountries(std::string city); // 3iv
-            // 3v afinal é diferente
             map<std::string,int> nDestinationsAirports(Airport airport); // 3v
             map<std::string,int> nDestinationsCities(Airport airport); // 3v
             map<std::string,int> nDestinationsCountries(Airport airport); // 3v

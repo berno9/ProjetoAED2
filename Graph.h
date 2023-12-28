@@ -498,6 +498,4 @@ vector<T> Graph<T>::topsort() const {
     return result;
 }
 
-
-
 #endif //PROJETOAED5_GRAPH_H

@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include "Menu.h"
+#include <cmath>
 
 Menu::Menu(Graph<Airport> *graph) {
     g = graph;
@@ -348,6 +349,10 @@ void Menu::allYes() {
     DisplayOptions();
 }
 /////// Fim do 1 /////////////////
+
+/////////////////////////////////
+//       3i                    //
+/////////////////////////////////
 int Menu::numberOfAirports() {
     return g->getNumVertex();
 }
@@ -358,6 +363,9 @@ int Menu::numberOfFlights() {
     }
     return c;
 }
+/////////////////////////////////
+//       3ii                   //
+/////////////////////////////////
 pair<int,int> Menu::nFlightAirlineInAirport(Airport airport){
    set<Airline> airlines;
    auto a = g->findVertex(airport);
@@ -366,6 +374,9 @@ pair<int,int> Menu::nFlightAirlineInAirport(Airport airport){
    }
    return {a->getAdj().size(),airlines.size()};
 }
+/////////////////////////////////
+//       3iii                  //
+/////////////////////////////////
 map<std::string,int> Menu::nFlightPerCity(){
     map<std::string,int> contagem;
     for (auto v : g->getVertexSet()){
@@ -384,6 +395,9 @@ map<std::string,int> Menu::nFlightPerAirline(){
     }
     return contagem;
 }
+/////////////////////////////////
+//       3iv                   //
+/////////////////////////////////
 map<std::string,int> Menu::airportToCountries(Airport airport){
     auto a = g->findVertex(airport);
     map<std::string,int> contagem;
@@ -403,27 +417,102 @@ map<std::string,int> Menu::cityToCountries(std::string city){
     }
     return  contagem;
 }
+/////////////////////////////////
+//       3v                    //
+/////////////////////////////////
 map<std::string,int> Menu::nDestinationsAirports(Airport airport){
     map<std::string,int> contagem;
-    for (auto v : g->findVertex(airport)->getAdj()){
-        contagem[v.getDest()->getInfo().getCode()]++;
+    queue<Vertex<Airport> *> q;
+    queue<Vertex<Airport> *> q2;
+    int c = 1;
+    for (auto k : g->getVertexSet()){
+        k->setVisited(false);
+    }
+    auto v = g->findVertex(airport);
+    v->setVisited(true);
+    q.push(v);
+    while (!q.empty()) {
+        auto v = q.front();
+        q.pop();
+        for (auto & e : v->getAdj()) {
+            auto w = e.getDest();
+            if (!w->isVisited()){
+                contagem.insert({w->getInfo().getCode(),c});
+                q2.push(w);
+                w->setVisited(true);
+            }
+        }
+        if (q.empty()){
+            c++;
+            q = q2;
+            while (!q2.empty())q2.pop();
+        }
     }
     return contagem;
 }
 map<std::string,int> Menu::nDestinationsCities(Airport airport){
     map<std::string,int> contagem;
-    for (auto v : g->findVertex(airport)->getAdj()){
-        contagem[v.getDest()->getInfo().getCity()]++;
+    queue<Vertex<Airport> *> q;
+    queue<Vertex<Airport> *> q2;
+    int c = 0;
+    for (auto k : g->getVertexSet()){
+        k->setVisited(false);
+    }
+    auto v = g->findVertex(airport);
+    v->setVisited(true);
+    q.push(v);
+    while (!q.empty()) {
+        auto v = q.front();
+        if (contagem.find(v->getInfo().getCity()) == contagem.end())contagem[v->getInfo().getCity()] = c;
+        q.pop();
+        for (auto & e : v->getAdj()) {
+            auto w = e.getDest();
+            if (!w->isVisited()){
+                q2.push(w);
+                w->setVisited(true);
+            }
+        }
+        if (q.empty()){
+            c++;
+            q = q2;
+            while (!q2.empty())q2.pop();
+        }
     }
     return contagem;
 }
 map<std::string,int> Menu::nDestinationsCountries(Airport airport){
     map<std::string,int> contagem;
-    for (auto v : g->findVertex(airport)->getAdj()){
-        contagem[v.getDest()->getInfo().getCountry()]++;
+    queue<Vertex<Airport> *> q;
+    queue<Vertex<Airport> *> q2;
+    int c = 0;
+    for (auto k : g->getVertexSet()){
+        k->setVisited(false);
+    }
+    auto v = g->findVertex(airport);
+    v->setVisited(true);
+    q.push(v);
+    while (!q.empty()) {
+        auto v = q.front();
+        if (contagem.find(v->getInfo().getCountry()) == contagem.end())contagem[v->getInfo().getCountry()] = c;
+        q.pop();
+        for (auto & e : v->getAdj()) {
+            auto w = e.getDest();
+            if (!w->isVisited()){
+                q2.push(w);
+                w->setVisited(true);
+            }
+        }
+        if (q.empty()){
+            c++;
+            q = q2;
+            while (!q2.empty())q2.pop();
+        }
     }
     return contagem;
 }
+/////////////////////////////////
+//       3vi                   //
+/////////////////////////////////
 map<std::string,int> Menu::nReachableDestinationsAirports(Airport airport,int k){
     map<std::string,int> contagem;
     queue<Vertex<Airport>*> temp;
@@ -492,7 +581,9 @@ map<std::string,int> Menu::nReachableDestinationsCountries(Airport airport,int k
 }
 
 
-
+/////////////////////////////////
+//       3viii                 //
+/////////////////////////////////
 int totalDegree(Airport airport, Graph<Airport>* g) {
     auto v = g->findVertex(airport);
     int total1 = v->getAdj().size();
@@ -518,7 +609,9 @@ std::vector<pair<Airport, int>> Menu::nGreatestAirTrafficCapacity(int k) {
     highest.erase(highest.begin() + k, highest.end());
     return highest;
 }
-
+/////////////////////////////////
+//       3ix                   //
+/////////////////////////////////
 void dfs_art(Vertex<Airport>* v,  set<std::string> &res,int &index) {
     v->setNum(index);
     v->setLow(index);
@@ -548,6 +641,9 @@ set<std::string> Menu::essentialAirports() {
     }
     return res;
 }
+/////////////////////////////////
+//       4                     //
+/////////////////////////////////
 bool inStack(queue<Vertex<Airport> *> q,Vertex<Airport> * a){
     while (!q.empty()){
         if (a == q.front())return true;
@@ -580,7 +676,7 @@ vector<vector<Flight>> Menu::AirportToAirport(Airport a, Airport b){
                     isFound = true;
                     res.push_back(w->getFlights());
                 }
-                q2.push(w);
+                if (!inStack(q2,w))q2.push(w);
             }
         }
         v->setVisited(true);
@@ -616,7 +712,7 @@ vector<vector<Flight>> Menu::CityToCity(std::string a, std::string b){
                     isFound = true;
                     res.push_back(w->getFlights());
                 }
-                q2.push(w);
+                if (!inStack(q2,w))q2.push(w);
             }
         }
         v->setVisited(true);
@@ -628,6 +724,9 @@ vector<vector<Flight>> Menu::CityToCity(std::string a, std::string b){
     }
     return res;
 }
+/////////////////////////////////
+//       5                     //
+/////////////////////////////////
 bool inVector(vector<std::string> airlines, std::string s){
     for (auto a : airlines)if (a == s)return true;
     return false;
@@ -657,7 +756,7 @@ vector<vector<Flight>> Menu::AirportToAirportWF(Airport a, Airport b,vector<std:
                     isFound = true;
                     res.push_back(w->getFlights());
                 }
-                q2.push(w);
+                if (!inStack(q2,w))q2.push(w);
             }
         }
         v->setVisited(true);
@@ -669,6 +768,20 @@ vector<vector<Flight>> Menu::AirportToAirportWF(Airport a, Airport b,vector<std:
     }
     return res;
 }
+double haversineDistance(double lat1,double lat2,double long1,double long2){
+    double PI = 4.0*atan(1.0);
+    double dlat1=lat1*(PI/180);
+    double dlong1=long1*(PI/180);
+    double dlat2=lat2*(PI/180);
+    double dlong2=long2*(PI/180);
+    double dLong=dlong1-dlong2;
+    double dLat=dlat1-dlat2;
+    double aHarv= pow(sin(dLat/2.0),2.0)+cos(dlat1)*cos(dlat2)*pow(sin(dLong/2),2);
+    double cHarv=2*atan2(sqrt(aHarv),sqrt(1.0-aHarv));
+    double earth=3963.19;
+    return earth*cHarv;
+}
+
 
 
 
