@@ -10,9 +10,6 @@
 #include <set>
 #include <map>
 #include "Graph.h"
-#include "Airport.h"
-#include "Airline.h"
-#include "Flight.h"
 
 class Menu {
 private:
@@ -42,6 +39,7 @@ public:
             map<std::string,int> nReachableDestinationsAirports(Airport airport,int k); // 3vi
             map<std::string,int> nReachableDestinationsCities(Airport airport,int k); // 3vi
             map<std::string,int> nReachableDestinationsCountries(Airport airport,int k); // 3vi
+            int maxTrip(); // vii
             std::vector<pair<Airport, int>> nGreatestAirTrafficCapacity(int k); // 3viii
             set<std::string>  essentialAirports(); //3ix
             // 4 BestFlightOption
