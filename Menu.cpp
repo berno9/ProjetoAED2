@@ -899,7 +899,7 @@ map<std::string,int> Menu::nFlightPerAirline(){
     return contagem;
 }
 
-int Menu::nFlightPerAirlineOne(std::string airline){
+int Menu::nFlightPerAirlineOne(Airline airline){
     int contagem;
     for (auto v : g->getVertexSet()){
         for (auto f : v.second->getAdj()){
