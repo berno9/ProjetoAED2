@@ -77,6 +77,7 @@ int main() {
     loadFlights(flights);
     loadFlightsToEdges(g,flights,airlines,airports);
     Menu menu = Menu(&g);
+    menu.secBase();
     return 0;
 }
 
