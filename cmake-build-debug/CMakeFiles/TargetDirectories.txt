@@ -1,0 +1,3 @@
+C:/Users/Bárbara/Desktop/2ano/AED/2proj/cmake-build-debug/CMakeFiles/ProjetoAED5.dir
+C:/Users/Bárbara/Desktop/2ano/AED/2proj/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Bárbara/Desktop/2ano/AED/2proj/cmake-build-debug/CMakeFiles/rebuild_cache.dir

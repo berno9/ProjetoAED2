@@ -47,8 +47,8 @@ public:
             void nFlightPerCityInterface(); //escolher entre todas as cidades ou apenas uma
                 //Apenas uma cidade
                 void nFlightPerCityInterfaceChoise(); //escolher a cidade pretendida
-                    void nFlightPerCityOneInterface(std::string); //mostrar o número de voos da cidade
-                        int nFlightPerCityOne(std::string); //calcular o número de voos de uma determinada cidade
+                    void nFlightPerCityOneInterface(std::string city); //mostrar o número de voos da cidade
+                        int nFlightPerCityOne(std::string city); //calcular o número de voos de uma determinada cidade
                 //Todas as cidades
                 void nFlightPerCityInterfaceAll(); //mostrar todos os voos por cidade
                     map<std::string,int> nFlightPerCity(); //obter todos os voos por cidade
@@ -56,8 +56,8 @@ public:
             void nFlightPerAirlineInterface(); //escolher entre todas as companhias ou apenas uma
                 //Apenas uma companhia aérea
                 void nFlightPerAirlineInterfaceChoise();//escolher a companhia aérea pretendida
-                    void nFlightPerAirlineOneInterface(Airline); //mostrar o número de voos da companhia aérea
-                        int nFlightPerAirlineOne(Airline); //calcular o número de voos de uma determinada companhia
+                    void nFlightPerAirlineOneInterface(Airline airline); //mostrar o número de voos da companhia aérea
+                        int nFlightPerAirlineOne(Airline airline); //calcular o número de voos de uma determinada companhia
                             map<std::string,int> airportToCountriesOne(Airport airport);
                         //Todas as cidades
                 void nFlightPerAirlineInterfaceAll(); //mostrar todos os voos por cidade
@@ -76,7 +76,7 @@ public:
     //3v
     void nDestinationsInterface();//escolher qual o aeroporto
         void nDestinationsTypeInterface(Airport airport); //escolher o tipo de destino sobre o qual quer a informação
-           //void nDestinationsShowInterface(Airport,int);
+           void nDestinationsShowInterface(Airport airport,int num);
 
     map<std::string,int> nDestinationsAirports(Airport airport); // 3v
     map<std::string,int> nDestinationsCities(Airport airport); // 3v

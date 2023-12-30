@@ -1,0 +1,15 @@
+# ninja log v5
+18	604	7256574273587193	CMakeFiles/ProjetoAED5.dir/Airline.cpp.obj	2e4d3bdbbbc9107e
+34	603	7256574273354487	CMakeFiles/ProjetoAED5.dir/Flight.cpp.obj	d7d57b1eb6c15b9a
+3	650	7256574274133451	CMakeFiles/ProjetoAED5.dir/Airport.cpp.obj	e53e4bc0223ed0ee
+12	2866	7256574296295397	CMakeFiles/ProjetoAED5.dir/main.cpp.obj	4ef3de3b72b45415
+22	704	7256575780797875	CMakeFiles/ProjetoAED5.dir/Airline.cpp.obj	2e4d3bdbbbc9107e
+14	740	7256575781234195	CMakeFiles/ProjetoAED5.dir/Airport.cpp.obj	e53e4bc0223ed0ee
+28	741	7256575781234195	CMakeFiles/ProjetoAED5.dir/Flight.cpp.obj	d7d57b1eb6c15b9a
+6	2757	7256575801395414	CMakeFiles/ProjetoAED5.dir/main.cpp.obj	4ef3de3b72b45415
+30	1148	7256577753619020	CMakeFiles/ProjetoAED5.dir/Flight.cpp.obj	d7d57b1eb6c15b9a
+14	1149	7256577753468244	CMakeFiles/ProjetoAED5.dir/Airline.cpp.obj	2e4d3bdbbbc9107e
+21	1262	7256577754516331	CMakeFiles/ProjetoAED5.dir/Airport.cpp.obj	e53e4bc0223ed0ee
+7	4937	7256577791525135	CMakeFiles/ProjetoAED5.dir/main.cpp.obj	4ef3de3b72b45415
+43	6237	7256577804554780	CMakeFiles/ProjetoAED5.dir/Menu.cpp.obj	92c2a292eb1c6be2
+6237	6893	7256577811134680	ProjetoAED5.exe	8dde586451ae799f
