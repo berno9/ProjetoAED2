@@ -11,7 +11,10 @@
 #include <stack>
 #include <list>
 #include <unordered_set>
+#include <unordered_map>
 #include "Airline.h"
+#include "Flight.h"
+#include "Airport.h"
 
 using namespace std;
 
@@ -31,10 +34,15 @@ class Vertex {
     int indegree;          // auxiliary field
     int num;               // auxiliary field
     int low;               // auxiliary field
+    vector<Flight> flightBefore;
 
     void addEdge(Vertex<T> *dest, double w, const Airline a);
     bool removeEdgeTo(Vertex<T> *d);
 public:
+    vector<Flight> getFlights(){return flightBefore;}
+    void addFlight(Flight a){flightBefore.push_back(a);}
+    void setFEmpty(){flightBefore.clear();}
+    Vertex();
     Vertex(T in);
     T getInfo() const;
     void setInfo(T in);
@@ -79,7 +87,7 @@ public:
 
 template <class T>
 class Graph {
-    vector<Vertex<T> *> vertexSet;      // vertex set
+    unordered_map<std::string,Vertex<T> *> vertexSet;      // vertex set
     int _index_;                        // auxiliary field
     stack<Vertex<T>> _stack_;           // auxiliary field
     list<list<T>> _list_sccs_;        // auxiliary field
@@ -87,13 +95,13 @@ class Graph {
     void dfsVisit(Vertex<T> *v,  vector<T> & res) const;
     bool dfsIsDAG(Vertex<T> *v) const;
 public:
-    Vertex<T> *findVertex(const T &in) const;
+    Vertex<T> * findVertexByCode(std::string code) const;
     int getNumVertex() const;
-    bool addVertex(const T &in);
+    bool addVertex(std::string code,const T &in);
     bool removeVertex(const T &in);
-    bool addEdge(const T &sourc, const T &dest, double w, const Airline a);
+    bool addEdge(std::string sourc, std::string dest, const Airline a);
     bool removeEdge(const T &sourc, const T &dest);
-    vector<Vertex<T> * > getVertexSet() const;
+    unordered_map<std::string,Vertex<T> *> getVertexSet() const;
     vector<T> dfs() const;
     vector<T> dfs(const T & source) const;
     vector<T> bfs(const T &source) const;
@@ -103,6 +111,8 @@ public:
 
 /****************** Provided constructors and functions ********************/
 
+template <class T>
+Vertex<T>::Vertex(){}
 template <class T>
 Vertex<T>::Vertex(T in): info(in) {}
 
@@ -116,7 +126,7 @@ int Graph<T>::getNumVertex() const {
 }
 
 template <class T>
-vector<Vertex<T> * > Graph<T>::getVertexSet() const {
+unordered_map<std::string,Vertex<T> *> Graph<T>::getVertexSet() const {
     return vertexSet;
 }
 
@@ -173,11 +183,8 @@ void Edge<T>::setAirlineOfFlight(std::string a) {
  * Auxiliary function to find a vertex with a given content.
  */
 template <class T>
-Vertex<T> * Graph<T>::findVertex(const T &in) const {
-    for (auto v : vertexSet)
-        if (v->info == in)
-            return v;
-    return NULL;
+Vertex<T> * Graph<T>::findVertexByCode(std::string code) const {
+    return vertexSet.find(code)->second;
 }
 
 template <class T>
@@ -236,10 +243,8 @@ void Vertex<T>::setAdj(const vector<Edge<T>> &adj) {
  *  Returns true if successful, and false if a vertex with that content already exists.
  */
 template <class T>
-bool Graph<T>::addVertex(const T &in) {
-    if ( findVertex(in) != NULL)
-        return false;
-    vertexSet.push_back(new Vertex<T>(in));
+bool Graph<T>::addVertex(std::string code,const T &in) {
+    vertexSet.insert({code,new Vertex<T>(in)});
     return true;
 }
 
@@ -250,12 +255,12 @@ bool Graph<T>::addVertex(const T &in) {
  * Returns true if successful, and false if the source or destination vertex does not exist.
  */
 template <class T>
-bool Graph<T>::addEdge(const T &sourc, const T &dest, double w, const Airline a) {
-    auto v1 = findVertex(sourc);
-    auto v2 = findVertex(dest);
+bool Graph<T>::addEdge(std::string sourc, std::string dest, const Airline a) {
+    auto v1 = findVertexByCode(sourc);
+    auto v2 = findVertexByCode(dest);
     if (v1 == NULL || v2 == NULL)
         return false;
-    v1->addEdge(v2, w, a);
+    v1->addEdge(v2, 0, a);
     return true;
 }
 
@@ -492,7 +497,5 @@ vector<T> Graph<T>::topsort() const {
 
     return result;
 }
-
-
 
 #endif //PROJETOAED5_GRAPH_H

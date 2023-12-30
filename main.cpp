@@ -1,14 +1,11 @@
 #include <iostream>
-#include "Graph.h"
-#include "Airport.h"
-#include "Flight.h"
 #include "Menu.h"
 #include <fstream>
 #include <sstream>
 #include <set>
 #include <unordered_map>
 
-void loadAirports(unordered_map<std::string ,Airport>& airports) {
+void loadAirports(Graph<Airport> &g) {
     ifstream aeroportos("airports.csv");
     vector<string> temp;
     string line;
@@ -20,14 +17,8 @@ void loadAirports(unordered_map<std::string ,Airport>& airports) {
 
         while (getline(iss, eachWord, ',')) temp.push_back(eachWord);
         Airport airport = Airport(temp[0],temp[1],temp[2],temp[3],stod(temp[4]),stod(temp[5]));
-        airports.insert({temp[0],airport});
+        g.addVertex(temp[0],airport);
         temp.clear();
-    }
-}
-
-void loadAirportsToVertices(Graph<Airport> &g, const unordered_map<std::string ,Airport>& airports) {
-    for (auto airport : airports) {
-        g.addVertex(airport.second);
     }
 }
 
@@ -66,31 +57,26 @@ void loadFlights(vector<Flight>& flights) {
 }
 
 void loadFlightsToEdges(Graph<Airport> &g,const vector<Flight>& flights, const unordered_map<std::string, Airline> &airlines,const unordered_map<std::string ,Airport> &airports) {
+    std::string last;
+    auto i = new Vertex<Airport>();
     for (Flight flight : flights) {
-        auto i = g.findVertex(airports.find(flight.getSource())->second);
-        auto d = g.findVertex(airports.find(flight.getTarget())->second);
-        g.addEdge(i->getInfo(),d->getInfo(),0,airlines.find(flight.getAirlineFromFlight())->second);
+        if (flight.getSource() != last)i = g.findVertexByCode(flight.getSource());
+        auto d = g.findVertexByCode(flight.getTarget());
+        g.addEdge(i->getInfo().getCode(),d->getInfo().getCode(),airlines.find(flight.getAirlineFromFlight())->second);
+        last = flight.getSource();
     }
 }
-
-
-
 
 int main() {
     Graph<Airport> g;
     unordered_map<std::string ,Airport> airports;
     unordered_map<std::string ,Airline> airlines;
-    vector<Flight> flights;
-    loadAirports(airports);
+    vector<Flight> flights; // We can order this from the source Airport so the loadFlightsToEdges is faster
+    loadAirports(g);
     loadAirlines(airlines);
     loadFlights(flights);
-    loadAirportsToVertices(g, airports);
     loadFlightsToEdges(g,flights,airlines,airports);
     Menu menu = Menu(&g);
-    //auto k = menu.nFlightAirlineInAirport(airports.find("ORY")->second);
-    //for (auto p : k){
-    //    cout<<p.first << " : " << p.second << endl;
-    //}
     menu.secBase();
     return 0;
 }
