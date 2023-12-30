@@ -759,7 +759,7 @@ map<std::string,int> Menu::nFlightPerCity(){
 int Menu::nFlightPerCityOne(std::string name) {
     int contagem = 0;
     for (auto v: g->getVertexSet()) {
-        if (name == v->getInfo().getCity()) {
+        if (name == v.second->getInfo().getCity()) {
             contagem++;
         }
     }
@@ -1119,9 +1119,6 @@ void Menu::diffCountriesAirportShowInterface(Airport airport) {
     }
 }
 
-
-map<std::string,int> Menu::airportToCountries(Airport airport){
-    auto a = g->findVertex(airport);
 
 /////////////////////////////////
 //       3iv                   //
