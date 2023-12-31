@@ -97,7 +97,7 @@ public:
     map<std::string,int> nReachableDestinationsCities(Airport airport,int k); // 3vi
     map<std::string,int> nReachableDestinationsCountries(Airport airport,int k); // 3vi
 
-    pair<map<std::string,std::string>,int>  maxTrip(); // vii
+    pair<vector<pair<std::string,std::string>>,int> maxTrip(); // vii
     std::vector<pair<Airport, int>> nGreatestAirTrafficCapacity(int k); // 3viii
     set<std::string>  essentialAirports(); //3ix
     // 4 BestFlightOption

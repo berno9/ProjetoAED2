@@ -1341,21 +1341,21 @@ map<std::string,int> helpTrip(Vertex<Airport>* v,Graph<Airport> *g){
     }
     return res;
 }
-pair<map<std::string,std::string>,int> Menu::maxTrip(){
-    pair<map<std::string,std::string>,int> res;
+pair<vector<pair<std::string,std::string>>,int> Menu::maxTrip(){
+    pair<vector<pair<std::string,std::string>>,int> res;
     for (auto par : g->getVertexSet()){
         auto v = par.second;
-        if (!v->isVisited()){
             auto r = helpTrip(v,g);
             int k = r.begin()->second;
             if (r.begin()->second == res.second){
-                for (auto k : r)res.first.insert({v->getInfo().getName(),k.first});
+                cout << r.size()<< ","<<k << endl;
+                for (auto k : r)res.first.push_back({v->getInfo().getName(),k.first});
             }else if (r.begin()->second > res.second){
+                cout << r.size()<< ","<<k << endl;
                 res.first.clear();
                 res.second = r.begin()->second;
-                for (auto k : r)res.first.insert({v->getInfo().getName(),k.first});
+                for (auto k : r)res.first.push_back({v->getInfo().getName(),k.first});
             }
-        }
     }
     return res;
 }
