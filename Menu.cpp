@@ -9,11 +9,14 @@
 
 void nDestinationsShowInterface(Airport airport, int i);
 
-Menu::Menu(Graph<Airport> *graph,unordered_map<std::string,std::string> map,set<std::string> city,set<std::string> country){
+Menu::Menu(Graph<Airport> *graph,unordered_map<std::string,std::string> map,unordered_set<std::string> city,
+           unordered_set<std::string> country,unordered_set<std::string> airlinesN,unordered_set<std::string> airlinesC){
     g = graph;
     nameToCodeAirport = map;
     cities = city;
     countries = country;
+    airlinesNames = airlinesN;
+    airlinesCodes = airlinesC;
 }
 Vertex<Airport>* Menu::getAirportByName(std::string n){
     auto it = nameToCodeAirport.find(n);
@@ -36,30 +39,8 @@ bool Menu::existCity(std::string c){
 bool Menu::existCountry(std::string c){
     return countries.find(c) != countries.end();
 }
-bool helpExistAirline(Vertex<Airport>* s,Graph<Airport> &g,std::string c){
-    queue<Vertex<Airport> *> q;
-    q.push(s);
-    s->setVisited(true);
-    while (!q.empty()) {
-        auto v = q.front();
-        q.pop();
-        for (auto & e : v->getAdj()) {
-            if (e.getAirlineOfFlight().getCode() == c || e.getAirlineOfFlight().getName() == c)return true;
-            auto w = e.getDest();
-            if ( ! w->isVisited() ) {
-                q.push(w);
-                w->setVisited(true);
-            }
-        }
-    }
-    return false;
-}
 bool Menu::existAirline(std::string airline){
-    for (auto v : g->getVertexSet())v.second->setVisited(false);
-    for (auto v : g->getVertexSet()){
-        if (!v.second->isVisited() && helpExistAirline(v.second,*g,airline))return true;
-    }
-    return false;
+    return airlinesNames.find(airline) != airlinesNames.end() || airlinesCodes.find(airline) != airlinesCodes.end();
 }
 
 void Menu::Base(){
@@ -813,11 +794,11 @@ void Menu::nFlightPerAirlineInterfaceChoise(){
         nFlightPerAirlineInterfaceChoise();
     }else nFlightPerAirlineOneInterface(k);
 }
-void Menu::nFlightPerAirlineOneInterface(Airline airline) {
+void Menu::nFlightPerAirlineOneInterface(std::string airline) {
     std::cout<<std::endl<<std::endl;
     std::cout<<"#############################################################################"<<std::endl;
     std::cout<<"##                                                                         ##"<<std::endl;
-    std::cout<<"##     Numero de voos da Companhia " << airline.getName() <<':'<<addspasces(airline.getName(),39)<<"##"<<std::endl;
+    std::cout<<"##     Numero de voos da Companhia " << airline <<':'<<addspasces(airline ,39)<<"##"<<std::endl;
     std::cout<<"##                                                                         ##"<<std::endl;
     std::cout<<"##     --- "<<nFlightPerAirlineOne(airline)<<addspasces(to_string(nFlightPerAirlineOne(airline)),62)<<"##"<<std::endl;
     std::cout<<"##                                                                         ##"<<std::endl;
@@ -879,11 +860,11 @@ map<std::string,int> Menu::nFlightPerAirline(){
     return contagem;
 }
 
-int Menu::nFlightPerAirlineOne(Airline airline){
+int Menu::nFlightPerAirlineOne(std::string airline){
     int contagem;
     for (auto v : g->getVertexSet()){
         for (auto f : v.second->getAdj()){
-            if( airline.getCode() == f.getAirlineOfFlight().getCode()) {
+            if( airline == f.getAirlineOfFlight().getCode()) {
                 contagem++;
             }
         }
@@ -1335,9 +1316,10 @@ map<std::string,int> Menu::nReachableDestinationsCountries(Airport airport,int k
 /////////////////////////////////
 //       3vii                  //
 /////////////////////////////////
-int helpTrip(Vertex<Airport>* v,Graph<Airport> *g){
+map<std::string,int> helpTrip(Vertex<Airport>* v,Graph<Airport> *g){
     queue<Vertex<Airport>*> temp;
     queue<Vertex<Airport>*> temp2;
+    map<std::string,int> res;
     int c = 0;
     for (auto v : g->getVertexSet())v.second->setVisited(false);
     temp.push(v); // Inicial vertex put in the queue
@@ -1348,47 +1330,52 @@ int helpTrip(Vertex<Airport>* v,Graph<Airport> *g){
                 v.getDest()->setVisited(true);
             }
         }
+        res.insert({temp.front()->getInfo().getName(),c});
         temp.pop();
         if (temp.empty()){ // This means we have changed level
             c++;
             temp = temp2;
+            if(!temp.empty())res.clear();
             while (!temp2.empty())temp2.pop();
         }
     }
-    return c-1;
+    return res;
 }
-int Menu::maxTrip(){
-    int maxV = 0;
+pair<map<std::string,std::string>,int> Menu::maxTrip(){
+    pair<map<std::string,std::string>,int> res;
     for (auto par : g->getVertexSet()){
         auto v = par.second;
-        maxV = max(maxV,helpTrip(v,g));
+        if (!v->isVisited()){
+            auto r = helpTrip(v,g);
+            int k = r.begin()->second;
+            if (r.begin()->second == res.second){
+                for (auto k : r)res.first.insert({v->getInfo().getName(),k.first});
+            }else if (r.begin()->second > res.second){
+                res.first.clear();
+                res.second = r.begin()->second;
+                for (auto k : r)res.first.insert({v->getInfo().getName(),k.first});
+            }
+        }
     }
-    return maxV;
+    return res;
 }
 /////////////////////////////////
 //       3viii                 //
 /////////////////////////////////
-int totalDegree(Airport airport, Graph<Airport>* g) {
-    auto v = g->findVertexByCode(airport.getCode());
-    int total1 = v->getAdj().size();
-    int total = 0;
-    for (auto vertex : g->getVertexSet()) {
-        for (auto edge : vertex.second->getAdj()) {
-            if (edge.getDest()->getInfo().getCode() == airport.getCode()) total++;
-        }
-    }
-    return total + total1;
-}
-
 bool compare(pair<Airport, int> a1, pair<Airport, int> a2) {
     return a1.second > a2.second;
 }
-
 std::vector<pair<Airport, int>> Menu::nGreatestAirTrafficCapacity(int k) {
     std::unordered_set<int> numbers;
     std::vector<pair<Airport, int>> highest;
-    for (auto vertex : g->getVertexSet()) highest.push_back({vertex.second->getInfo(), totalDegree(vertex.second->getInfo(), g)});
-
+    for (auto v : g->getVertexSet())v.second->setIndegree(0);
+    for (auto v : g->getVertexSet()){
+        for (auto d : v.second->getAdj()){
+            auto a = d.getDest();
+            a->setIndegree(a->getIndegree() + 1);
+        }
+    }
+    for (auto vertex : g->getVertexSet()) highest.push_back({vertex.second->getInfo(), vertex.second->getIndegree()+vertex.second->getAdj().size()});
     sort(highest.begin(), highest.end(), compare);
     highest.erase(highest.begin() + k, highest.end());
     return highest;
@@ -1428,15 +1415,14 @@ set<std::string> Menu::essentialAirports() {
 /////////////////////////////////
 //       4                     //
 /////////////////////////////////
-bool inStack(queue<Vertex<Airport> *> q,Vertex<Airport> * a){
+bool inQueue(queue<Vertex<Airport> *> q,Vertex<Airport> * a){
     while (!q.empty()){
         if (a == q.front())return true;
         q.pop();
     }
     return false;
 }
-vector<vector<Flight>> Menu::AirportToAirport(Airport a, Airport b){
-    auto v = g->findVertexByCode(a.getCode());
+vector<vector<Flight>> Menu::AirportToAirport(Vertex<Airport>* v, Vertex<Airport>* b){
     vector<vector<Flight>> res;
     queue<Vertex<Airport> *> q;
     queue<Vertex<Airport> *> q2;
@@ -1452,15 +1438,15 @@ vector<vector<Flight>> Menu::AirportToAirport(Airport a, Airport b){
         q.pop();
         for (auto & e : v->getAdj()) {
             auto w = e.getDest();
-            if (!w->isVisited() && !inStack(q,w)){
+            if (!w->isVisited() && !inQueue(q,w)){
                 w->setFEmpty();
                 for (auto f : v->getFlights()){w->addFlight(f);}
                 w->addFlight(Flight(v->getInfo().getCode(),w->getInfo().getCode(),e.getAirlineOfFlight().getCode()));
-                if (w->getInfo().getCode() == b.getCode()){
+                if (w == b){
                     isFound = true;
                     res.push_back(w->getFlights());
                 }
-                if (!inStack(q2,w))q2.push(w);
+                if (!inQueue(q2,w))q2.push(w);
             }
         }
         v->setVisited(true);
@@ -1472,41 +1458,173 @@ vector<vector<Flight>> Menu::AirportToAirport(Airport a, Airport b){
     }
     return res;
 }
-
-vector<vector<Flight>> Menu::CityToCity(std::string a, std::string b){
+vector<vector<Flight>> Menu::ListAirportToListAirport(queue<Vertex<Airport>*> s, queue<Vertex<Airport>*> t){
     vector<vector<Flight>> res;
-    queue<Vertex<Airport> *> q;
     queue<Vertex<Airport> *> q2;
     for (auto k : g->getVertexSet()){
         k.second->setVisited(false);
         k.second->setFEmpty();
-        if (k.second->getInfo().getCity() == a)q.push(k.second);
     }
     bool isFound = false;
-    while (!q.empty()) {
-        auto v = q.front();
-        q.pop();
+    while (!s.empty()) {
+        auto v = s.front();
+        s.pop();
         for (auto & e : v->getAdj()) {
             auto w = e.getDest();
-            if (!w->isVisited() && !inStack(q,w)){
+            if (!w->isVisited() && !inQueue(s,w)){
                 w->setFEmpty();
                 for (auto f : v->getFlights()){w->addFlight(f);}
                 w->addFlight(Flight(v->getInfo().getCode(),w->getInfo().getCode(),e.getAirlineOfFlight().getCode()));
-                if (w->getInfo().getCity() == b){
+                if (inQueue(t,w)){
                     isFound = true;
                     res.push_back(w->getFlights());
                 }
-                if (!inStack(q2,w))q2.push(w);
+                if (!inQueue(q2,w))q2.push(w);
             }
         }
         v->setVisited(true);
-        if (q.empty()){
+        if (s.empty()){
             if(isFound)break;
-            q = q2;
+            s = q2;
             while (!q2.empty())q2.pop();
         }
     }
     return res;
+}
+vector<vector<Flight>> Menu::CityToCity(std::string a, std::string b,vector<std::string>airlines){
+    queue<Vertex<Airport> *> q1;
+    queue<Vertex<Airport> *> q2;
+    for (auto v : g->getVertexSet()){
+        if (v.second->getInfo().getCity() == a)q1.push(v.second);
+        if (v.second->getInfo().getCity() == b)q2.push(v.second);
+    }
+    if (airlines.empty())return ListAirportToListAirport(q1,q2);
+    else return ListAirportToListAirportWF(q1,q2,airlines);
+}
+double haversineDistance(double lat1,double lat2,double long1,double long2){
+    double PI = 4.0*atan(1.0);
+    double dlat1=lat1*(PI/180);
+    double dlong1=long1*(PI/180);
+    double dlat2=lat2*(PI/180);
+    double dlong2=long2*(PI/180);
+    double dLong=dlong1-dlong2;
+    double dLat=dlat1-dlat2;
+    double aHarv= pow(sin(dLat/2.0),2.0)+cos(dlat1)*cos(dlat2)*pow(sin(dLong/2),2);
+    double cHarv=2*atan2(sqrt(aHarv),sqrt(1.0-aHarv));
+    double earth=3963.19;
+    return earth*cHarv;
+}
+vector<vector<Flight>> Menu::GeoCordinatesToGeoCordinates(double lat1,double lat2,double long1,double long2,vector<std::string>airlines){
+    queue<Vertex<Airport>*> Sourceairports;
+    queue<Vertex<Airport>*> Targetairports;
+    double minDistance = INT16_MAX;
+    double minDistance2 = INT16_MAX;
+    for (auto v : g->getVertexSet()){
+        double d = haversineDistance(lat1,v.second->getInfo().getLatitude(),long1,v.second->getInfo().getLongitude());
+        double d2 = haversineDistance(lat2,v.second->getInfo().getLatitude(),long2,v.second->getInfo().getLongitude());
+        if (d == minDistance)Sourceairports.push(v.second);
+        else if (d < minDistance){
+            minDistance = d;
+            while (!Sourceairports.empty())Sourceairports.pop();
+            Sourceairports.push(v.second);
+        }
+        if (d2 == minDistance2)Targetairports.push(v.second);
+        else if (d2 < minDistance2){
+            minDistance2 = d2;
+            while (!Targetairports.empty())Targetairports.pop();
+            Targetairports.push(v.second);
+        }
+    }
+    if (airlines.empty())return ListAirportToListAirport(Sourceairports,Targetairports);
+    else return ListAirportToListAirportWF(Sourceairports,Targetairports,airlines);
+}
+vector<vector<Flight>> Menu::AirportToCity(Vertex<Airport>* v, std::string c,vector<std::string>airlines){
+    queue<Vertex<Airport> *> q1;
+    queue<Vertex<Airport> *> q2;
+    for (auto v : g->getVertexSet()){
+        if (v.second->getInfo().getCity() == c)q2.push(v.second);
+    }
+    q1.push(v);
+    if (airlines.empty())return ListAirportToListAirport(q1,q2);
+    else return ListAirportToListAirportWF(q1,q2,airlines);
+}
+vector<vector<Flight>> Menu::AirportToGeoCordinates(Vertex<Airport>* v,double lat1,double long1,vector<std::string>airlines){
+    queue<Vertex<Airport> *> q1;
+    queue<Vertex<Airport> *> q2;
+    double minDistance = INT16_MAX;
+    q1.push(v);
+    for (auto v : g->getVertexSet()){
+        double d = haversineDistance(lat1,v.second->getInfo().getLatitude(),long1,v.second->getInfo().getLongitude());
+        if (d == minDistance)q2.push(v.second);
+        else if (d < minDistance){
+            minDistance = d;
+            while (!q2.empty())q2.pop();
+            q2.push(v.second);
+        }
+    }
+    if (airlines.empty())return ListAirportToListAirport(q1,q2);
+    else return ListAirportToListAirportWF(q1,q2,airlines);
+}
+vector<vector<Flight>> Menu::CityToAirport(std::string c, Vertex<Airport>* v,vector<std::string>airlines){
+    queue<Vertex<Airport> *> q1;
+    queue<Vertex<Airport> *> q2;
+    q2.push(v);
+    for (auto v : g->getVertexSet()){
+        if (v.second->getInfo().getCity() == c)q1.push(v.second);
+    }
+    if (airlines.empty())return ListAirportToListAirport(q1,q2);
+    else return ListAirportToListAirportWF(q1,q2,airlines);
+}
+vector<vector<Flight>> Menu::CityToGeoCordinates(std::string c,double lat1,double long1,vector<std::string>airlines){
+    queue<Vertex<Airport> *> q1;
+    queue<Vertex<Airport> *> q2;
+    double minDistance = INT16_MAX;
+    for (auto v : g->getVertexSet()){
+        if (v.second->getInfo().getCity() == c)q1.push(v.second);
+        double d = haversineDistance(lat1,v.second->getInfo().getLatitude(),long1,v.second->getInfo().getLongitude());
+        if (d == minDistance)q1.push(v.second);
+        else if (d < minDistance){
+            minDistance = d;
+            while (!q2.empty())q2.pop();
+            q2.push(v.second);
+        }
+    }
+    if (airlines.empty())return ListAirportToListAirport(q1,q2);
+    else return ListAirportToListAirportWF(q1,q2,airlines);
+}
+vector<vector<Flight>> Menu::GeoCordinatesToAirport(double lat1,double long1,Vertex<Airport>* v,vector<std::string>airlines){
+    queue<Vertex<Airport> *> q1;
+    queue<Vertex<Airport> *> q2;
+    double minDistance = INT16_MAX;
+    q2.push(v);
+    for (auto v : g->getVertexSet()){
+        double d = haversineDistance(lat1,v.second->getInfo().getLatitude(),long1,v.second->getInfo().getLongitude());
+        if (d == minDistance)q1.push(v.second);
+        else if (d < minDistance){
+            minDistance = d;
+            while (!q1.empty())q1.pop();
+            q1.push(v.second);
+        }
+    }
+    if (airlines.empty())return ListAirportToListAirport(q1,q2);
+    else return ListAirportToListAirportWF(q1,q2,airlines);
+}
+vector<vector<Flight>> Menu::GeoCordinatesToCity(double lat1,double long1,std::string c,vector<std::string>airlines){
+    queue<Vertex<Airport> *> q1;
+    queue<Vertex<Airport> *> q2;
+    double minDistance = INT16_MAX;
+    for (auto v : g->getVertexSet()){
+        if (v.second->getInfo().getCity() == c)q2.push(v.second);
+        double d = haversineDistance(lat1,v.second->getInfo().getLatitude(),long1,v.second->getInfo().getLongitude());
+        if (d == minDistance)q1.push(v.second);
+        else if (d < minDistance){
+            minDistance = d;
+            while (!q1.empty())q1.pop();
+            q1.push(v.second);
+        }
+    }
+    if (airlines.empty())return ListAirportToListAirport(q1,q2);
+    else return ListAirportToListAirportWF(q1,q2,airlines);
 }
 /////////////////////////////////
 //       5                     //
@@ -1532,7 +1650,7 @@ vector<vector<Flight>> Menu::AirportToAirportWF(Airport a, Airport b,vector<std:
         q.pop();
         for (auto & e : v->getAdj()) {
             auto w = e.getDest();
-            if (!w->isVisited() && !inStack(q,w) && !inVector(airlines,e.getAirlineOfFlight().getCode())){
+            if (!w->isVisited() && !inQueue(q,w) && inVector(airlines,e.getAirlineOfFlight().getCode())){
                 w->setFEmpty();
                 for (auto f : v->getFlights()){w->addFlight(f);}
                 w->addFlight(Flight(v->getInfo().getCode(),w->getInfo().getCode(),e.getAirlineOfFlight().getCode()));
@@ -1540,7 +1658,7 @@ vector<vector<Flight>> Menu::AirportToAirportWF(Airport a, Airport b,vector<std:
                     isFound = true;
                     res.push_back(w->getFlights());
                 }
-                if (!inStack(q2,w))q2.push(w);
+                if (!inQueue(q2,w))q2.push(w);
             }
         }
         v->setVisited(true);
@@ -1552,16 +1670,55 @@ vector<vector<Flight>> Menu::AirportToAirportWF(Airport a, Airport b,vector<std:
     }
     return res;
 }
-double haversineDistance(double lat1,double lat2,double long1,double long2){
-    double PI = 4.0*atan(1.0);
-    double dlat1=lat1*(PI/180);
-    double dlong1=long1*(PI/180);
-    double dlat2=lat2*(PI/180);
-    double dlong2=long2*(PI/180);
-    double dLong=dlong1-dlong2;
-    double dLat=dlat1-dlat2;
-    double aHarv= pow(sin(dLat/2.0),2.0)+cos(dlat1)*cos(dlat2)*pow(sin(dLong/2),2);
-    double cHarv=2*atan2(sqrt(aHarv),sqrt(1.0-aHarv));
-    double earth=3963.19;
-    return earth*cHarv;
+vector<vector<Flight>> Menu::ListAirportToListAirportWF(queue<Vertex<Airport>*> s, queue<Vertex<Airport>*> t,vector<std::string>airlines){
+    vector<vector<Flight>> res;
+    queue<Vertex<Airport> *> q2;
+    for (auto k : g->getVertexSet()){
+        k.second->setVisited(false);
+        k.second->setFEmpty();
+    }
+    bool isFound = false;
+    while (!s.empty()) {
+        auto v = s.front();
+        s.pop();
+        for (auto & e : v->getAdj()) {
+            auto w = e.getDest();
+            if (!w->isVisited() && !inQueue(s,w) && inVector(airlines,e.getAirlineOfFlight().getCode())){
+                w->setFEmpty();
+                for (auto f : v->getFlights()){w->addFlight(f);}
+                w->addFlight(Flight(v->getInfo().getCode(),w->getInfo().getCode(),e.getAirlineOfFlight().getCode()));
+                if (inQueue(t,w)){
+                    isFound = true;
+                    res.push_back(w->getFlights());
+                }
+                if (!inQueue(q2,w))q2.push(w);
+            }
+        }
+        v->setVisited(true);
+        if (s.empty()){
+            if(isFound)break;
+            s = q2;
+            while (!q2.empty())q2.pop();
+        }
+    }
+    return res;
 }
+void Menu::minimizeAirlines(vector<vector<Flight>> &flights){
+    int minV = INT16_MAX;
+    for (auto f : flights){
+        set<std::string> airlines;
+        for (auto a : f) airlines.insert(a.getAirlineFromFlight());
+        minV = min(int(airlines.size()),minV);
+    }
+    auto it = flights.begin();
+    while (it != flights.end()) {
+        set<std::string> airlines;
+        for (auto a : *it) airlines.insert(a.getAirlineFromFlight());
+        if (minV < int(airlines.size())){
+            it = flights.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+

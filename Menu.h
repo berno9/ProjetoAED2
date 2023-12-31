@@ -16,10 +16,13 @@ class Menu {
 private:
     Graph<Airport> *g;
     unordered_map<std::string,std::string> nameToCodeAirport;
-    set<std::string> cities;
-    set<std::string> countries;
+    unordered_set<std::string> cities;
+    unordered_set<std::string> countries;
+    unordered_set<std::string> airlinesNames;
+    unordered_set<std::string> airlinesCodes;
 public:
-    Menu(Graph<Airport> *graph,unordered_map<std::string,std::string> map,set<std::string> city,set<std::string> country);
+    Menu(Graph<Airport> *graph,unordered_map<std::string,std::string> map,unordered_set<std::string> city,
+         unordered_set<std::string> country,unordered_set<std::string> airlinesN,unordered_set<std::string> airlinesC);
     Vertex<Airport>* getAirportByName(std::string n);
     Vertex<Airport>* getAirportByCode(std::string c);
     bool existAirline(std::string airline);
@@ -64,9 +67,9 @@ public:
     void nFlightPerAirlineInterface(); //escolher entre todas as companhias ou apenas uma
     //Apenas uma companhia aérea
     void nFlightPerAirlineInterfaceChoise();//escolher a companhia aérea pretendida
-    void nFlightPerAirlineOneInterface(Airline airline); //mostrar o número de voos da companhia aérea
-    int nFlightPerAirlineOne(Airline airline); //calcular o número de voos de uma determinada companhia
-    map<std::string,int> airportToCountriesOne(Airport airport);
+    void nFlightPerAirlineOneInterface(std::string airline); //mostrar o número de voos da companhia aérea
+    int nFlightPerAirlineOne(std::string airline); //calcular o número de voos de uma determinada companhia
+    map<std::string,int> airportToCountriesOne(std::string airport);
     //Todas as cidades
     void nFlightPerAirlineInterfaceAll(); //mostrar todos os voos por cidade
     map<std::string,int> nFlightPerAirline(); //obter todos os voos por companhia aérea
@@ -94,14 +97,25 @@ public:
     map<std::string,int> nReachableDestinationsCities(Airport airport,int k); // 3vi
     map<std::string,int> nReachableDestinationsCountries(Airport airport,int k); // 3vi
 
-    int maxTrip(); // vii
+    pair<map<std::string,std::string>,int>  maxTrip(); // vii
     std::vector<pair<Airport, int>> nGreatestAirTrafficCapacity(int k); // 3viii
     set<std::string>  essentialAirports(); //3ix
     // 4 BestFlightOption
-    vector<vector<Flight>> AirportToAirport(Airport a, Airport b);
-    vector<vector<Flight>> CityToCity(std::string a, std::string b);
+    vector<vector<Flight>> AirportToAirport(Vertex<Airport>* v, Vertex<Airport>* b);
+    vector<vector<Flight>> ListAirportToListAirport(queue<Vertex<Airport>*> s, queue<Vertex<Airport>*> t);
+    vector<vector<Flight>> CityToCity(std::string a, std::string b,vector<std::string>airlines);
+    vector<vector<Flight>> GeoCordinatesToGeoCordinates(double lat1,double lat2,double long1,double long2,vector<std::string>airlines);
+    vector<vector<Flight>> AirportToCity(Vertex<Airport>* v, std::string c,vector<std::string>airlines);
+    vector<vector<Flight>> AirportToGeoCordinates(Vertex<Airport>* v,double lat1,double long1,vector<std::string>airlines);
+    vector<vector<Flight>> CityToAirport(std::string c, Vertex<Airport>* v,vector<std::string>airlines);
+    vector<vector<Flight>> CityToGeoCordinates(std::string c, double lat1,double long1,vector<std::string>airlines);
+    vector<vector<Flight>> GeoCordinatesToAirport(double lat1,double long1,Vertex<Airport>* v,vector<std::string>airlines);
+    vector<vector<Flight>> GeoCordinatesToCity(double lat1,double long1,std::string c,vector<std::string>airlines);
+
     // 5 BestFlightOption with filters
     vector<vector<Flight>> AirportToAirportWF(Airport a, Airport b,vector<std::string>airlines);
+    vector<vector<Flight>> ListAirportToListAirportWF(queue<Vertex<Airport>*> s, queue<Vertex<Airport>*> t,vector<std::string>airlines);
+    void minimizeAirlines(vector<vector<Flight>> &flights);
 };
 
 
