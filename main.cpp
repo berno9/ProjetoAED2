@@ -5,7 +5,7 @@
 #include <set>
 #include <unordered_map>
 
-void loadAirports(Graph<Airport> &g) {
+void loadAirports(Graph<Airport> &g,unordered_map<std::string,std::string> &nameToCodeAirport,set<std::string> &cities,set<std::string> &countries) {
     ifstream aeroportos("airports.csv");
     vector<string> temp;
     string line;
@@ -18,6 +18,9 @@ void loadAirports(Graph<Airport> &g) {
         while (getline(iss, eachWord, ',')) temp.push_back(eachWord);
         Airport airport = Airport(temp[0],temp[1],temp[2],temp[3],stod(temp[4]),stod(temp[5]));
         g.addVertex(temp[0],airport);
+        nameToCodeAirport.insert({temp[1],temp[0]});
+        cities.insert(temp[2]);
+        countries.insert(temp[3]);
         temp.clear();
     }
 }
@@ -56,7 +59,7 @@ void loadFlights(vector<Flight>& flights) {
     }
 }
 
-void loadFlightsToEdges(Graph<Airport> &g,const vector<Flight>& flights, const unordered_map<std::string, Airline> &airlines,const unordered_map<std::string ,Airport> &airports) {
+void loadFlightsToEdges(Graph<Airport> &g,const vector<Flight>& flights, const unordered_map<std::string, Airline> &airlines) {
     std::string last;
     auto i = new Vertex<Airport>();
     for (Flight flight : flights) {
@@ -69,14 +72,16 @@ void loadFlightsToEdges(Graph<Airport> &g,const vector<Flight>& flights, const u
 
 int main() {
     Graph<Airport> g;
-    unordered_map<std::string ,Airport> airports;
     unordered_map<std::string ,Airline> airlines;
+    unordered_map<std::string,std::string> nameToCodeAirport;
+    set<std::string> cities;
+    set<std::string> countries;
     vector<Flight> flights; // We can order this from the source Airport so the loadFlightsToEdges is faster
-    loadAirports(g);
+    loadAirports(g,nameToCodeAirport,cities,countries);
     loadAirlines(airlines);
     loadFlights(flights);
-    loadFlightsToEdges(g,flights,airlines,airports);
-    Menu menu = Menu(&g);
+    loadFlightsToEdges(g,flights,airlines);
+    Menu menu = Menu(&g,nameToCodeAirport,cities,countries);
     menu.secBase();
     return 0;
 }
