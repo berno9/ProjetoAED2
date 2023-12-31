@@ -86,12 +86,7 @@ int main() {
     loadFlights(flights);
     loadFlightsToEdges(g,flights,airlines);
     Menu menu = Menu(&g,nameToCodeAirport,cities,countries,airlinesNames,airlinesCodes);
-    auto k = menu.maxTrip();
-    for (auto v : k.first){
-        cout << v.first << "," << v.second << endl;
-    }
-    cout << k.second;
-    //menu.secBase();
+    menu.flightOptionsInterfaceStart();
     return 0;
 }
 
