@@ -1425,37 +1425,18 @@ void dfs_art(Vertex<Airport>* v,  set<std::string> &res,int &index) {
 
 set<std::string> Menu::essentialAirports() {
     set<std::string> res;
+    // Create a copy of the original graph and duplicating the edges so became a undirected
     Graph<Airport>k;
     for (auto v : g->getVertexSet()){
         k.addVertex(v.first,v.second->getInfo());
     }
-    k.setVertexSet(g->getVertexSet());
-    int c = 0;
     for (auto v : g->getVertexSet()){
-        c += v.second->getAdj().size();
-    }
-    cout << c <<endl;
-    c = 0;
-    for (auto v : k.getVertexSet()){
-        c += v.second->getAdj().size();
-    }
-    cout << c <<endl;
-    for (auto v : k.getVertexSet()){
         for (auto d : v.second->getAdj()){
+            k.addEdge(v.second->getInfo().getCode(),d.getDest()->getInfo().getCode(),d.getAirlineOfFlight());
             k.addEdge(d.getDest()->getInfo().getCode(),v.second->getInfo().getCode(),d.getAirlineOfFlight());
         }
     }
-    c = 0;
-    for (auto v : g->getVertexSet()){
-        c += v.second->getAdj().size();
-    }
-    cout << c <<endl;
-    c = 0;
-    for (auto v : k.getVertexSet()){
-        c += v.second->getAdj().size();
-    }
-    cout << c <<endl;
-    int i = 0; // Contagem
+    int i = 0;
     for (auto vertex : k.getVertexSet()){
         vertex.second->setNum(0);
         vertex.second->setProcessing(false);
