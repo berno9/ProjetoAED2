@@ -86,8 +86,6 @@ int main() {
     loadFlights(flights);
     loadFlightsToEdges(g,flights,airlines);
     Menu menu = Menu(&g,nameToCodeAirport,cities,countries,airlinesNames,airlinesCodes);
-    menu.flightOptionsInterfaceStart();
+    menu.secBase();
     return 0;
 }
-
-

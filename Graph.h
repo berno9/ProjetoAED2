@@ -102,6 +102,7 @@ public:
     bool addEdge(std::string sourc, std::string dest, const Airline a);
     bool removeEdge(const T &sourc, const T &dest);
     unordered_map<std::string,Vertex<T> *> getVertexSet() const;
+    void setVertexSet(unordered_map<std::string,Vertex<T> *> g);
     vector<T> dfs() const;
     vector<T> dfs(const T & source) const;
     vector<T> bfs(const T &source) const;
@@ -496,6 +497,10 @@ vector<T> Graph<T>::topsort() const {
     }
 
     return result;
+}
+template<class T>
+void Graph<T>::setVertexSet(unordered_map<std::string,Vertex<T> *> g){
+    vertexSet = g;
 }
 
 #endif //PROJETOAED5_GRAPH_H
