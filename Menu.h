@@ -24,8 +24,6 @@ public:
     Vertex<Airport>* getAirportByCode(std::string c);
     bool existAirline(std::string airline);
     bool existCity(std::string c);
-    bool existCountry(std::string c);
-    std::string addspasces(std::string, int);
     void Base();
     void DisplayOptions();
     void SourceNo();
@@ -62,8 +60,8 @@ public:
             void nFlightPerAirlineInterface(); //escolher entre todas as companhias ou apenas uma
             //Apenas uma companhia aérea
             void nFlightPerAirlineInterfaceChoise();//escolher a companhia aérea pretendida
-                void nFlightPerAirlineOneInterface(Airline airline); //mostrar o número de voos da companhia aérea
-                    int nFlightPerAirlineOne(Airline airline); //calcular o número de voos de uma determinada companhia
+                void nFlightPerAirlineOneInterface(std::string airline); //mostrar o número de voos da companhia aérea
+                    int nFlightPerAirlineOne(std::string airline); //calcular o número de voos de uma determinada companhia
                         map<std::string,int> airportToCountriesOne(Airport airport);
             //Todas as cidades
             void nFlightPerAirlineInterfaceAll(); //mostrar todos os voos por cidade
@@ -108,10 +106,56 @@ public:
     void essentialAirportsInterface();
         set<std::string>  essentialAirports(); //3ix
     // 4 BestFlightOption
-    vector<vector<Flight>> AirportToAirport(Airport a, Airport b);
-    vector<vector<Flight>> CityToCity(std::string a, std::string b);
-    // 5 BestFlightOption with filters
-    vector<vector<Flight>> AirportToAirportWF(Airport a, Airport b,vector<std::string>airlines);
+    void flightOptionsInterfaceStart();
+    void flightOptionsInterfaceTarget(int i);
+    void preferenceAirlineInterface(int i ,int d);
+    void preferenceAirlineChosingInterface(int i ,int d);
+    void minimizeAirlinesInterface(int i ,int d,vector<std::string>airlines);
+    void choose(int i ,int d,vector<std::string>airlines,bool minimize);
+
+    void AirportToAirportInterface(int i ,int d,vector<std::string>airlines,bool minimize);
+    void AirportToAirportInterfaceResult(int i ,int d,vector<std::string>airlines,bool minimize,Vertex<Airport>* v, Vertex<Airport>* b);
+    vector<vector<Flight>> AirportToAirport(Vertex<Airport>* v, Vertex<Airport>* b);
+    vector<vector<Flight>> AirportToAirportWF(Vertex<Airport>* a, Vertex<Airport>* b,vector<std::string>airlines); // with airline filter
+
+    void AirportToCityInterface(int i ,int d,vector<std::string>airlines,bool minimize);
+    void AirportToCityInterfaceResult(int i ,int d,vector<std::string>airlines,bool minimize,Vertex<Airport>* v, std::string c);
+    vector<vector<Flight>> AirportToCity(Vertex<Airport>* v, std::string c,vector<std::string>airlines);
+
+    void AirportToGeoCordinatesInterface(int i, int d, vector<std::string>airlines,bool minimize);
+    void AirportToGeoCordinatesInterfaceResult(int i, int d, vector<std::string>airlines,bool minimize,Vertex<Airport>* v,double lat1,double long1);
+    vector<vector<Flight>> AirportToGeoCordinates(Vertex<Airport>* v,double lat1,double long1,vector<std::string>airlines);
+
+    void CityToAirportInterface(int i , int d ,vector<std::string>airlines,bool minimize);
+    void CityToAirportInterfaceResult(int i, int d,vector<std::string>airlines,bool minimize,std::string c, Vertex<Airport>* v);
+    vector<vector<Flight>> CityToAirport(std::string c, Vertex<Airport>* v,vector<std::string>airlines);
+
+    void CityToCityInterface(int i, int d, vector<std::string>airlines,bool minimize);
+    void CityToCityInterfaceResult(int i, int d, vector<std::string>airlines,bool minimize,std::string c1, std::string c2);
+    vector<vector<Flight>> CityToCity(std::string a, std::string b,vector<std::string>airlines);
+
+    void CityToGeoCordinatesInterface(int i, int d, vector<std::string>airlines,bool minimize);
+    void CityToGeoCordinatesInterfaceResult(int i, int d, vector<std::string>airlines,bool minimize,std::string c, double lat1,double long1);
+    vector<vector<Flight>> CityToGeoCordinates(std::string c, double lat1,double long1,vector<std::string>airlines);
+
+    void GeoCordinatesToAirportInterface(int i,int d,vector<std::string>airlines,bool minimize);
+    void GeoCordinatesToAirportInterfaceResult(int i,int d,vector<std::string>airlines,bool minimize,double lat1,double long1,Vertex<Airport>* v);
+    vector<vector<Flight>> GeoCordinatesToAirport(double lat1,double long1,Vertex<Airport>* v,vector<std::string>airlines);
+
+    void GeoCordinatesToCityInterface(int i,int d,vector<std::string>airlines,bool minimize);
+    void GeoCordinatesToCityInterfaceResult(int i,int d,vector<std::string>airlines,bool minimize,double lat1,double long1,std::string c);
+    vector<vector<Flight>> GeoCordinatesToCity(double lat1,double long1,std::string c,vector<std::string>airlines);
+
+    void GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>airlines,bool minimize);
+    void GeoCordinatesToGeoCordinatesInterfaceResult(int i,int d,vector<std::string>airlines,bool minimize,double lat1,double lat2,double long1,double long2);
+    vector<vector<Flight>> GeoCordinatesToGeoCordinates(double lat1,double lat2,double long1,double long2,vector<std::string>airlines);
+
+    void interfaceResult();
+
+    vector<vector<Flight>> ListAirportToListAirport(queue<Vertex<Airport>*> s, queue<Vertex<Airport>*> t); // General function used in almost every case
+    vector<vector<Flight>> ListAirportToListAirportWF(queue<Vertex<Airport>*> s, queue<Vertex<Airport>*> t,vector<std::string>airlines); // With airline filter
+    void minimizeAirlines(vector<vector<Flight>> &flights); // To minimize the diferent airlines in the answer
+
 };
 
 
