@@ -1445,7 +1445,7 @@ void Menu::flightOptionsInterfaceStart(){
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##          2 -> Cidade                                              ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##          3 -> Coordenadas geográficas                             ##"<<std::endl;
+    std::cout<<"##          3 -> Coordenadas geograficas                             ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     0 -> Voltar                                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
@@ -1478,7 +1478,7 @@ void Menu::flightOptionsInterfaceTarget(int i){
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##          2 -> Cidade                                              ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##          3 -> Coordenadas geográficas                             ##"<<std::endl;
+    std::cout<<"##          3 -> Coordenadas geograficas                             ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     0 -> Voltar                                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
