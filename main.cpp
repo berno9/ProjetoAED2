@@ -80,7 +80,7 @@ int main() {
     unordered_set<std::string> countries;
     unordered_set<std::string> airlinesNames;
     unordered_set<std::string> airlinesCodes;
-    vector<Flight> flights; // We can order this from the source Airport so the loadFlightsToEdges is faster
+    vector<Flight> flights;
     loadAirports(g,nameToCodeAirport,cities,countries);
     loadAirlines(airlines,airlinesNames,airlinesCodes);
     loadFlights(flights);
