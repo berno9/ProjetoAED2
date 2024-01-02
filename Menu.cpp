@@ -16,11 +16,10 @@ std::string addspasces(std::string str, int nr){
 }
 
 Menu::Menu(Graph<Airport> *graph,unordered_map<std::string,std::string> map,unordered_set<std::string> city,
-           unordered_set<std::string> country,unordered_set<std::string> airlinesN,unordered_set<std::string> airlinesC){
+           unordered_set<std::string> airlinesN,unordered_set<std::string> airlinesC){
     g = graph;
     nameToCodeAirport = map;
     cities = city;
-    countries = country;
     airlinesNames = airlinesN;
     airlinesCodes = airlinesC;
 }
@@ -1053,7 +1052,7 @@ void Menu::nReachableDestinationsStopsInterface(Vertex<Airport>* airport, int de
     std::cout<<"##                                                                                        ##"<<std::endl;
     std::cout<<"##     Introduzir o Numero de Escalas:_______                                             ##"<<std::endl;
     std::cout<<"##                                                                                        ##"<<std::endl;
-    std::cout<<"##     0 -> Voltar:                                                                       ##"<<std::endl;
+    std::cout<<"##     -1 -> Voltar:                                                                      ##"<<std::endl;
     std::cout<<"##                                                                                        ##"<<std::endl;
     std::cout<<"############################################################################################"<<std::endl<<std::endl;
 
@@ -1064,7 +1063,7 @@ void Menu::nReachableDestinationsStopsInterface(Vertex<Airport>* airport, int de
     std::cin>>escalas;
 
     switch (escalas) {
-        case 0:
+        case -1:
             std::cout<<"A sair...";
             nReachableDestinationsTypeInterface(airport);
             break;
@@ -1076,13 +1075,13 @@ void Menu::nReachableDestinationsShowAirports(Vertex<Airport>* airport, int esca
     map<std::string,int> myMap;
     switch (dest) {
         case 1:
-            myMap= nReachableDestinationsAirports(airport,escalas);
+            myMap= nReachableDestinationsAirports(airport,escalas+1);
             break;
         case 2:
-            myMap = nReachableDestinationsCities(airport,escalas);
+            myMap = nReachableDestinationsCities(airport,escalas+1);
             break;
         case 3:
-            myMap = nReachableDestinationsCountries(airport,escalas);
+            myMap = nReachableDestinationsCountries(airport,escalas+1);
             break;
     }
 
@@ -1892,7 +1891,7 @@ void Menu::AirportToGeoCordinatesInterface(int i, int d, vector<std::string> air
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Longitude destino:_______(-180 a 180)              ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##     0 -> Voltar                                                   ##"<<std::endl;
+    std::cout<<"##     a -> Voltar                                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"#######################################################################"<<std::endl<<std::endl;
     std::string k;
@@ -1900,7 +1899,7 @@ void Menu::AirportToGeoCordinatesInterface(int i, int d, vector<std::string> air
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
-    if (k == "0") {
+    if (k == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -1916,7 +1915,7 @@ void Menu::AirportToGeoCordinatesInterface(int i, int d, vector<std::string> air
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
-    if (k == "0") {
+    if (k == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -1931,7 +1930,7 @@ void Menu::AirportToGeoCordinatesInterface(int i, int d, vector<std::string> air
     std::cin.sync();
     std::string k1;
     std::getline(std::cin, k1);
-    if (k1 == "0") {
+    if (k1 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2146,7 +2145,7 @@ void Menu::CityToGeoCordinatesInterface(int i, int d, vector<std::string>airline
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Longitude destino:_______(-180 a 180)              ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##     0 -> Voltar                                                   ##"<<std::endl;
+    std::cout<<"##     a -> Voltar                                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"#######################################################################"<<std::endl<<std::endl;
     std::string k;
@@ -2154,7 +2153,7 @@ void Menu::CityToGeoCordinatesInterface(int i, int d, vector<std::string>airline
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
-    if (k == "0") {
+    if (k == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2169,7 +2168,7 @@ void Menu::CityToGeoCordinatesInterface(int i, int d, vector<std::string>airline
     std::cin.sync();
     std::string k2;
     std::getline(std::cin, k2);
-    if (k2 == "0") {
+    if (k2 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2184,7 +2183,7 @@ void Menu::CityToGeoCordinatesInterface(int i, int d, vector<std::string>airline
     std::cin.sync();
     std::string k1;
     std::getline(std::cin, k1);
-    if (k1 == "0") {
+    if (k1 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2247,7 +2246,7 @@ void Menu::GeoCordinatesToAirportInterface(int i,int d,vector<std::string>airlin
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Aeroporto:_______                                  ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##     0 -> Voltar                                                   ##"<<std::endl;
+    std::cout<<"##     a -> Voltar                                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"#######################################################################"<<std::endl<<std::endl;
     std::cout<<"Latitude: ";
@@ -2255,7 +2254,7 @@ void Menu::GeoCordinatesToAirportInterface(int i,int d,vector<std::string>airlin
     std::cin.sync();
     std::string k2;
     std::getline(std::cin, k2);
-    if (k2 == "0") {
+    if (k2 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2270,7 +2269,7 @@ void Menu::GeoCordinatesToAirportInterface(int i,int d,vector<std::string>airlin
     std::cin.sync();
     std::string k1;
     std::getline(std::cin, k1);
-    if (k1 == "0") {
+    if (k1 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2285,7 +2284,7 @@ void Menu::GeoCordinatesToAirportInterface(int i,int d,vector<std::string>airlin
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
-    if (k == "0") {
+    if (k == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2348,7 +2347,7 @@ void Menu::GeoCordinatesToCityInterface(int i,int d,vector<std::string>airlines,
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Cidade:_______                                     ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##     0 -> Voltar                                                   ##"<<std::endl;
+    std::cout<<"##     a -> Voltar                                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"#######################################################################"<<std::endl<<std::endl;
     std::cout<<"Latitude: ";
@@ -2356,7 +2355,7 @@ void Menu::GeoCordinatesToCityInterface(int i,int d,vector<std::string>airlines,
     std::cin.sync();
     std::string k2;
     std::getline(std::cin, k2);
-    if (k2 == "0") {
+    if (k2 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2371,7 +2370,7 @@ void Menu::GeoCordinatesToCityInterface(int i,int d,vector<std::string>airlines,
     std::cin.sync();
     std::string k1;
     std::getline(std::cin, k1);
-    if (k1 == "0") {
+    if (k1 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2386,7 +2385,7 @@ void Menu::GeoCordinatesToCityInterface(int i,int d,vector<std::string>airlines,
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
-    if (k == "0") {
+    if (k == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2449,7 +2448,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Longitude destino:_______(-180 a 180)              ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##     0 -> Voltar                                                   ##"<<std::endl;
+    std::cout<<"##     a -> Voltar                                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"#######################################################################"<<std::endl<<std::endl;
     std::cout<<"Latitude: ";
@@ -2457,7 +2456,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::cin.sync();
     std::string k1;
     std::getline(std::cin, k1);
-    if (k1 == "0") {
+    if (k1 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2472,7 +2471,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::cin.sync();
     std::string k2;
     std::getline(std::cin, k2);
-    if (k2 == "0") {
+    if (k2 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2487,7 +2486,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::cin.sync();
     std::string k3;
     std::getline(std::cin, k3);
-    if (k3 == "0") {
+    if (k3 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2502,7 +2501,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::cin.sync();
     std::string k4;
     std::getline(std::cin, k4);
-    if (k4 == "0") {
+    if (k4 == "a") {
         std::cout << std::endl << "A sair ..." << std::endl;
         minimizeAirlinesInterface( i,d,airlines);
         return;
@@ -2684,6 +2683,4 @@ void Menu::minimizeAirlines(vector<vector<Flight>> &flights){
             ++it;
         }
     }
-
-
 }

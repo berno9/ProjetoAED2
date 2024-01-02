@@ -5,7 +5,7 @@
 #include <set>
 #include <unordered_map>
 
-void loadAirports(Graph<Airport> &g,unordered_map<std::string,std::string> &nameToCodeAirport,unordered_set<std::string> &cities,unordered_set<std::string> &countries) {
+void loadAirports(Graph<Airport> &g,unordered_map<std::string,std::string> &nameToCodeAirport,unordered_set<std::string> &cities) {
     ifstream aeroportos("airports.csv");
     vector<string> temp;
     string line;
@@ -20,7 +20,6 @@ void loadAirports(Graph<Airport> &g,unordered_map<std::string,std::string> &name
         g.addVertex(temp[0],airport);
         nameToCodeAirport.insert({temp[1],temp[0]});
         cities.insert(temp[2]);
-        countries.insert(temp[3]);
         temp.clear();
     }
 }
@@ -77,15 +76,14 @@ int main() {
     unordered_map<std::string ,Airline> airlines;
     unordered_map<std::string,std::string> nameToCodeAirport;
     unordered_set<std::string> cities;
-    unordered_set<std::string> countries;
     unordered_set<std::string> airlinesNames;
     unordered_set<std::string> airlinesCodes;
     vector<Flight> flights;
-    loadAirports(g,nameToCodeAirport,cities,countries);
+    loadAirports(g,nameToCodeAirport,cities);
     loadAirlines(airlines,airlinesNames,airlinesCodes);
     loadFlights(flights);
     loadFlightsToEdges(g,flights,airlines);
-    Menu menu = Menu(&g,nameToCodeAirport,cities,countries,airlinesNames,airlinesCodes);
+    Menu menu = Menu(&g,nameToCodeAirport,cities,airlinesNames,airlinesCodes);
     menu.secBase();
     return 0;
 }
