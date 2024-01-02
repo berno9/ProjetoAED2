@@ -275,7 +275,7 @@ public:
     /// @param v : vértice de origem
     /// @param d : vértice de destino
     /// @return lista do conjunto de voos possíveis
-    /// Complexidade esperada : n * m * o, O(n^4)
+    /// Complexidade esperada : n * m * o, O(n^3)
     vector<vector<Flight>> AirportToAirport(Vertex<Airport>* v, Vertex<Airport>* b);
     /// Função para realizar esse cálculo com companhias aéreas preferenciais
     /// @param v : vértice de origem
