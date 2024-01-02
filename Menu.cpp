@@ -15,11 +15,14 @@ std::string addspasces(std::string str, int nr){
     return res;
 }
 
-Menu::Menu(Graph<Airport> *graph,unordered_map<std::string,std::string> map,set<std::string> city,set<std::string> country){
+Menu::Menu(Graph<Airport> *graph,unordered_map<std::string,std::string> map,unordered_set<std::string> city,
+           unordered_set<std::string> country,unordered_set<std::string> airlinesN,unordered_set<std::string> airlinesC){
     g = graph;
     nameToCodeAirport = map;
     cities = city;
     countries = country;
+    airlinesNames = airlinesN;
+    airlinesCodes = airlinesC;
 }
 Vertex<Airport>* Menu::getAirportByName(std::string n){
     auto it = nameToCodeAirport.find(n);
@@ -39,30 +42,8 @@ Vertex<Airport>* Menu::getAirportByCode(std::string c){
 bool Menu::existCity(std::string c){
     return cities.find(c) != cities.end();
 }
-bool helpExistAirline(Vertex<Airport>* s,Graph<Airport> &g,std::string c){
-    queue<Vertex<Airport> *> q;
-    q.push(s);
-    s->setVisited(true);
-    while (!q.empty()) {
-        auto v = q.front();
-        q.pop();
-        for (auto & e : v->getAdj()) {
-            if (e.getAirlineOfFlight().getCode() == c || e.getAirlineOfFlight().getName() == c)return true;
-            auto w = e.getDest();
-            if ( ! w->isVisited() ) {
-                q.push(w);
-                w->setVisited(true);
-            }
-        }
-    }
-    return false;
-}
 bool Menu::existAirline(std::string airline){
-    for (auto v : g->getVertexSet())v.second->setVisited(false);
-    for (auto v : g->getVertexSet()){
-        if (!v.second->isVisited() && helpExistAirline(v.second,*g,airline))return true;
-    }
-    return false;
+    return airlinesNames.find(airline) != airlinesNames.end() || airlinesCodes.find(airline) != airlinesCodes.end();
 }
 
 
@@ -79,7 +60,7 @@ void Menu::secBase(){
     std::cout << "##                                                                                                    ##" << std::endl;
     std::cout << "##      3- Numero de voos por cidade/companhia aerea                                                  ##" << std::endl;
     std::cout << "##                                                                                                    ##" << std::endl;
-    std::cout << "##      4- Numero de paises destino diferentes de um aeroporto/cidade                                 ##" << std::endl;
+    std::cout << "##      4- Numero de paises destino diferentes a partir de um aeroporto/cidade                        ##" << std::endl;
     std::cout << "##                                                                                                    ##" << std::endl;
     std::cout << "##      5- Numero de destinos disponiveis com partida num aeroporto                                   ##" << std::endl;
     std::cout << "##                                                                                                    ##" << std::endl;
@@ -103,6 +84,7 @@ void Menu::secBase(){
     switch (k) {
         case 0:
             std::cout << "A sair ..." << std::endl;
+            exit(0);
             break;
         case 1:
             numberOfAirportsInterface();
@@ -214,7 +196,7 @@ void Menu::nFlightAirlineInAirportChoiceInterface(){
     auto r = getAirportByName(k);
     if (r == nullptr) r = getAirportByCode(k);
     if (r == nullptr){
-            std::cout << "O nome do aeroporto que inseriu nao esta correto. Por favor volte a tentar." << std::endl;
+        std::cout << "O nome do aeroporto que inseriu nao esta correto. Por favor volte a tentar." << std::endl;
         nFlightAirlineInAirportChoiceInterface();
     }else nFlightAirlineInAirportInterface(r);
 
@@ -496,7 +478,7 @@ void Menu::nFlightPerAirlineOneInterface(std::string airline) {
     std::cout<<"##                                                                         ##"<<std::endl;
     std::cout<<"##     Numero de voos da Companhia " << airline <<':'<<addspasces(airline,39)<<"##"<<std::endl;
     std::cout<<"##                                                                         ##"<<std::endl;
-    std::cout<<"##     --- "<<nFlightPerAirlineOne(airline)<<addspasces(to_string(nFlightPerAirlineOne(airline)),63)<<"##"<<std::endl;
+    std::cout<<"##     --- "<<nFlightPerAirlineOne(airline)<<addspasces(to_string(nFlightPerAirlineOne(airline)),64)<<"##"<<std::endl;
     std::cout<<"##                                                                         ##"<<std::endl;
     std::cout<<"##     0 -> Voltar                                                         ##"<<std::endl;
     std::cout<<"##                                                                         ##"<<std::endl;
@@ -558,10 +540,10 @@ map<std::string,int> Menu::nFlightPerAirline(){
 }
 
 int Menu::nFlightPerAirlineOne(std::string airline){
-    int contagem;
+    int contagem = 0;
     for (auto v : g->getVertexSet()){
         for (auto f : v.second->getAdj()){
-            if( airline == f.getAirlineOfFlight().getCode()) {
+            if( airline == f.getAirlineOfFlight().getCode() || airline == f.getAirlineOfFlight().getName()) {
                 contagem++;
             }
         }
@@ -577,7 +559,7 @@ void Menu:: differentCountriesInterface() {
     std::cout << std::endl << std::endl;
     std::cout << "#############################################################################" << std::endl;
     std::cout << "##                                                                         ##" << std::endl;
-    std::cout << "##     Numero de paises destino diferentes de:                             ##" << std::endl;
+    std::cout << "##     Numero de paises destino diferentes a aprtir de:                    ##" << std::endl;
     std::cout << "##                                                                         ##" << std::endl;
     std::cout << "##     1 -> Cidade                                                         ##" << std::endl;
     std::cout << "##                                                                         ##" << std::endl;
@@ -983,7 +965,6 @@ void Menu::nReachableDestinationsInterface(){
     std::cout<<"##     Numero de destinos alcancaveis com partida num Aeroporto            ##"<<std::endl;
     std::cout<<"##           com um maximo de X escalas:                                   ##"<<std::endl;
     std::cout<<"##                                                                         ##"<<std::endl;
-    std::cout<<"##                                                                         ##"<<std::endl;
     std::cout<<"##     Introduzir o Aeroporto:_______                                      ##"<<std::endl;
     std::cout<<"##                                                                         ##"<<std::endl;
     std::cout<<"##     0 -> Voltar:                                                        ##"<<std::endl;
@@ -1010,9 +991,8 @@ void Menu::nReachableDestinationsInterface(){
 void Menu::nReachableDestinationsTypeInterface(Vertex<Airport>* airport){
     std::cout<<std::endl<<std::endl;
     std::cout<<"#######################################################################################"<<std::endl;
-    std::cout<<"##                                                                                   ##"<<std::endl;
-    std::cout<<"##     Numero de destinos alcancaveis com partida no Aeroporto "<<airport->getInfo().getName()<<addspasces(airport->getInfo().getName(),22)<<"##"<<std::endl;
-    std::cout<<"##           com um maximo de X escalas:                                             ##"<<std::endl;
+    std::cout<<"##     Numero de destinos alcancaveis com partida no Aeroporto                       ##"<<std::endl;
+    std::cout<<"##                "<<airport->getInfo().getName()<<" com um maximo de X escalas:"<<addspasces(airport->getInfo().getName(),39)<<"##"<<std::endl;
     std::cout<<"##                                                                                   ##"<<std::endl;
     std::cout<<"##     Qual o tipo de destino?                                                       ##"<<std::endl;
     std::cout<<"##                                                                                   ##"<<std::endl;
@@ -1068,7 +1048,6 @@ void Menu::nReachableDestinationsStopsInterface(Vertex<Airport>* airport, int de
     std::cout<<"##     Numero de "<<tipo<<" alcancaveis com partida no Aeroporto "<<airport->getInfo().getName()<<addspasces(airport->getInfo().getName()+tipo,35)<<"##"<<std::endl;
     std::cout<<"##           com um maximo de X Escalas:                                                  ##"<<std::endl;
     std::cout<<"##                                                                                        ##"<<std::endl;
-    std::cout<<"##                                                                                        ##"<<std::endl;
     std::cout<<"##     Introduzir o Numero de Escalas:_______                                             ##"<<std::endl;
     std::cout<<"##                                                                                        ##"<<std::endl;
     std::cout<<"##     0 -> Voltar:                                                                       ##"<<std::endl;
@@ -1083,7 +1062,7 @@ void Menu::nReachableDestinationsStopsInterface(Vertex<Airport>* airport, int de
 
     switch (escalas) {
         case 0:
-            std::cout<<"A sair...";
+            std::cout<<"A sair..."<<std::endl;
             nReachableDestinationsTypeInterface(airport);
             break;
         default:
@@ -1110,8 +1089,7 @@ void Menu::nReachableDestinationsShowAirports(Vertex<Airport>* airport, int esca
     std::cout<<"##     Numero de "<<tipo<<" alcancaveis com partida no Aeroporto "<<airport->getInfo().getName()<<addspasces(airport->getInfo().getName()+tipo,35)<<"##"<<std::endl;
     std::cout<<"##           com um maximo de "<<escalas<<" Escalas:"<<addspasces(to_string(escalas),51)<<"##"<<std::endl;
     std::cout<<"##                                                                                        ##"<<std::endl;
-    std::cout<<"##                                                                                        ##"<<std::endl;
-    std::cout <<"##     ----- " << myMap.size() << addspasces(to_string(myMap.size()), 77) << "##" << std::endl;std::cout<<"##                                                                                        ##"<<std::endl;
+    std::cout <<"##     ----- " << myMap.size() << addspasces(to_string(myMap.size()), 77) << "##" << std::endl;
     std::cout<<"##                                                                                        ##"<<std::endl;
     std::cout<<"##     0 -> Voltar:                                                                       ##"<<std::endl;
     std::cout<<"##                                                                                        ##"<<std::endl;
@@ -1295,15 +1273,13 @@ void Menu::gratestKInterface() {
     std::cout << "##                                                                                   ##" << std::endl;
     std::cout << "##     Os k principais aeroportos com maior capacidade de trafego aereo:             ##" << std::endl;
     std::cout << "##                                                                                   ##" << std::endl;
-    std::cout << "##                                                                                   ##" << std::endl;
     std::cout << "##     Introduza o numero k:                                                         ##" << std::endl;
-    std::cout << "##                                                                                   ##" << std::endl;
     std::cout << "##                                                                                   ##" << std::endl;
     std::cout << "##     0 -> Voltar                                                                   ##" << std::endl;
     std::cout << "##                                                                                   ##" << std::endl;
     std::cout << "#######################################################################################" << std::endl<< std::endl;
 
-    std::cout<<"Opcao: ";
+    std::cout<<"K: ";
     std::string k;
     std::cin.clear();
     std::cin.sync();
@@ -1313,7 +1289,7 @@ void Menu::gratestKInterface() {
         secBase();
     }
     else{
-    gratestKShowInterface(stoi(k));
+        gratestKShowInterface(stoi(k));
     }
 }
 
@@ -1337,7 +1313,7 @@ void Menu::gratestKShowInterface(int k){
     std::cout << "##                                                                                        ##" << std::endl;
     std::cout << "############################################################################################" << std::endl<< std::endl;
 
-    std::cout<<"Volta? ";
+    std::cout<<"Voltar? ";
     std::string a;
     std::cin.clear();
     std::cin.sync();
@@ -1443,9 +1419,23 @@ void dfs_art(Vertex<Airport>* v,  set<std::string> &res,int &index) {
 
 set<std::string> Menu::essentialAirports() {
     set<std::string> res;
-    int i = 0; // Contagem
-    for (auto vertex : g->getVertexSet())vertex.second->setProcessing(false);
-    for (auto vertex : g->getVertexSet()) {
+    // Create a copy of the original graph and duplicating the edges so became a undirected
+    Graph<Airport>k;
+    for (auto v : g->getVertexSet()){
+        k.addVertex(v.first,v.second->getInfo());
+    }
+    for (auto v : g->getVertexSet()){
+        for (auto d : v.second->getAdj()){
+            k.addEdge(v.second->getInfo().getCode(),d.getDest()->getInfo().getCode(),d.getAirlineOfFlight());
+            k.addEdge(d.getDest()->getInfo().getCode(),v.second->getInfo().getCode(),d.getAirlineOfFlight());
+        }
+    }
+    int i = 0;
+    for (auto vertex : k.getVertexSet()){
+        vertex.second->setNum(0);
+        vertex.second->setProcessing(false);
+    }
+    for (auto vertex : k.getVertexSet()) {
         if (vertex.second->getNum() == 0){
             dfs_art(vertex.second,res,i);
         }
@@ -1460,13 +1450,17 @@ void showInterface(vector<vector<Flight>> res, Graph<Airport>* g){
     std::cout<<std::endl;
     std::cout <<  "##############################################################################" << std::endl;
     std::cout <<  "##                                                                          ##" << std::endl;
-    int k = 0;
+    int k = 1;
     for (auto f : res){
-        std::cout <<"##    "<< "Opcao " << k <<" : "<<addspasces(to_string(k),61)<<"##"<<std::endl;
-        std::cout <<  "##                                                                          ##" << std::endl;
+        std::cout <<"## -"<< "Opcao " << k <<": "<<addspasces(to_string(k),64)<<"##"<<std::endl;
+        //std::cout <<  "##                                                                          ##" << std::endl;
         for (auto h : f){
-            std::cout <<"##  _ "<< g->getVertexSet().find(h.getSource())->second->getInfo().getName() << " -> " << g->getVertexSet().find(h.getTarget())->second->getInfo().getName() << ".: " << h.getAirlineFromFlight()<<addspasces(g->getVertexSet().find(h.getSource())->second->getInfo().getName()+g->getVertexSet().find(h.getTarget())->second->getInfo().getName()+h.getAirlineFromFlight(),63) << "##"<<std::endl;
+            std::cout <<"##     ->"<< h.getAirlineFromFlight()<<addspasces(h.getAirlineFromFlight(),67 )<<"##"<<std::endl;
+            std::cout <<"##         De: "<< g->getVertexSet().find(h.getSource())->second->getInfo().getName()<<addspasces(g->getVertexSet().find(h.getSource())->second->getInfo().getName(),61) << "##"<<std::endl;
+            std::cout <<"##         Para: "<< g->getVertexSet().find(h.getTarget())->second->getInfo().getName() <<addspasces(g->getVertexSet().find(h.getTarget())->second->getInfo().getName(),59) << "##"<<std::endl;
+            //std::cout <<  "##                                                                          ##" << std::endl;
         }
+        std::cout <<  "##                                                                          ##" << std::endl;
         k++;
     }
     std::cout <<  "##                                                                          ##" << std::endl;
@@ -1475,6 +1469,7 @@ void showInterface(vector<vector<Flight>> res, Graph<Airport>* g){
     std::cout <<  "##    0 -> Voltar                                                           ##" << std::endl;
     std::cout <<  "##                                                                          ##" << std::endl;
     std::cout <<  "##############################################################################" << std::endl;
+    std::cout <<std::endl;
 }
 bool inQueue(queue<Vertex<Airport> *> q,Vertex<Airport> * a){
     while (!q.empty()){
@@ -1503,8 +1498,7 @@ void Menu::flightOptionsInterfaceStart(){
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##   Mostrar voos:                                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##     De :                                                          ##"<<std::endl;
-    std::cout<<"##                                                                   ##"<<std::endl;
+    std::cout<<"##     De:                                                           ##"<<std::endl;
     std::cout<<"##          1 -> Aeroporto                                           ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##          2 -> Cidade                                              ##"<<std::endl;
@@ -1515,13 +1509,13 @@ void Menu::flightOptionsInterfaceStart(){
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"#######################################################################"<<std::endl<<std::endl;
     std::string k;
-    std::cout<<"De : ";
+    std::cout<<"De: ";
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
     if (k == "0"){
         std::cout << std::endl << "A sair ..." << std::endl;
-        // Voltar para menu inicial
+        secBase();
         return;
     }else if ( stoi(k) > 0 && stoi(k) <= 3)flightOptionsInterfaceTarget(stoi(k));
     else{
@@ -1537,7 +1531,6 @@ void Menu::flightOptionsInterfaceTarget(int i){
     std::cout<<"##   Mostrar voos:                                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Para:                                                         ##"<<std::endl;
-    std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##          1 -> Aeroporto                                           ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##          2 -> Cidade                                              ##"<<std::endl;
@@ -1597,7 +1590,7 @@ void Menu::preferenceAirlineChosingInterface(int i ,int d){
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Escreve as companhias separadas por virgulas :                  ##"<<std::endl;
+    std::cout<<"##   Escreve as companhias separadas por virgulas:                   ##"<<std::endl;
     std::cout<<"##   (Codigo ou o nome)                                              ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     1 -> Introduza as companhias:_______                          ##"<<std::endl;
@@ -1606,7 +1599,7 @@ void Menu::preferenceAirlineChosingInterface(int i ,int d){
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"#######################################################################"<<std::endl<<std::endl;
     std::string k;
-    std::cout<<"Companhias : ";
+    std::cout<<"Companhias: ";
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
@@ -1705,7 +1698,7 @@ void Menu::AirportToAirportInterface(int i ,int d,vector<std::string>airlines,bo
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Digite os Aeroportos :                                          ##"<<std::endl;
+    std::cout<<"##   Digite os Aeroportos:                                           ##"<<std::endl;
     std::cout<<"##   (Codigo ou o nome)                                              ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     1 -> Primeiro aeroporto:_______                               ##"<<std::endl;
@@ -1716,13 +1709,13 @@ void Menu::AirportToAirportInterface(int i ,int d,vector<std::string>airlines,bo
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"#######################################################################"<<std::endl<<std::endl;
     std::string k;
-    std::cout<<"Escolha o primeiro : ";
+    std::cout<<"Escolha o primeiro: ";
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     auto r = getAirportByName(k);
@@ -1732,13 +1725,13 @@ void Menu::AirportToAirportInterface(int i ,int d,vector<std::string>airlines,bo
         AirportToAirportInterface(i,d,airlines,minimize);
         return;
     }
-    std::cout<<"Escolha o segundo : ";
+    std::cout<<"Escolha o segundo: ";
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     auto r2 = getAirportByName(k);
@@ -1765,8 +1758,8 @@ void Menu::AirportToAirportInterfaceResult(int i ,int d,vector<std::string>airli
         std::cout << std::endl << "A sair ..." << std::endl;
         AirportToAirportInterface(i,d,airlines,minimize);}
     else{
-            std::cout << "Opcao invalida. Por favor, escolha uma opcao valida." << std::endl;
-            AirportToAirportInterfaceResult(i,d,airlines,minimize,v,b);
+        std::cout << "Opcao invalida. Por favor, escolha uma opcao valida." << std::endl;
+        AirportToAirportInterfaceResult(i,d,airlines,minimize,v,b);
     }
     // Interface de resposta
 }
@@ -1811,7 +1804,7 @@ void Menu::AirportToCityInterface(int i ,int d,vector<std::string>airlines,bool 
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Digite os Parametros :                                          ##"<<std::endl;
+    std::cout<<"##   Digite os Parametros:                                           ##"<<std::endl;
     std::cout<<"##   (Codigo ou o nome do Aeroporto)                                 ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Aeroporto:_______                                  ##"<<std::endl;
@@ -1828,7 +1821,7 @@ void Menu::AirportToCityInterface(int i ,int d,vector<std::string>airlines,bool 
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     auto r = getAirportByName(k);
@@ -1844,7 +1837,7 @@ void Menu::AirportToCityInterface(int i ,int d,vector<std::string>airlines,bool 
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (!existCity(k)){
@@ -1887,7 +1880,7 @@ void Menu::AirportToGeoCordinatesInterface(int i, int d, vector<std::string> air
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Digite os Parametros :                                          ##"<<std::endl;
+    std::cout<<"##   Digite os Parametros:                                           ##"<<std::endl;
     std::cout<<"##   (Codigo ou o nome do Aeroporto)                                 ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Aeroporto:_______                                  ##"<<std::endl;
@@ -1906,7 +1899,7 @@ void Menu::AirportToGeoCordinatesInterface(int i, int d, vector<std::string> air
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     auto r = getAirportByName(k);
@@ -1922,7 +1915,7 @@ void Menu::AirportToGeoCordinatesInterface(int i, int d, vector<std::string> air
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k) < -90 || stod(k) > 90){
@@ -1937,7 +1930,7 @@ void Menu::AirportToGeoCordinatesInterface(int i, int d, vector<std::string> air
     std::getline(std::cin, k1);
     if (k1 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k1) < -180 || stod(k1) > 180){
@@ -1987,7 +1980,7 @@ void Menu::CityToCityInterface(int i, int d, vector<std::string>airlines,bool mi
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Digite os Parametros :                                          ##"<<std::endl;
+    std::cout<<"##   Digite os Parametros:                                           ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Cidade 1:_______                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
@@ -1997,13 +1990,13 @@ void Menu::CityToCityInterface(int i, int d, vector<std::string>airlines,bool mi
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"#######################################################################"<<std::endl<<std::endl;
     std::string k;
-    std::cout<<"Cidade 1 : ";
+    std::cout<<"Cidade 1: ";
     std::cin.clear();
     std::cin.sync();
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (!existCity(k)){
@@ -2011,14 +2004,14 @@ void Menu::CityToCityInterface(int i, int d, vector<std::string>airlines,bool mi
         AirportToCityInterface(i,d,airlines,minimize);
         return;
     }
-    std::cout<<"Cidade 2 : ";
+    std::cout<<"Cidade 2: ";
     std::cin.clear();
     std::cin.sync();
     std::string k1;
     std::getline(std::cin, k1);
     if (k1 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (!existCity(k1)){
@@ -2062,7 +2055,7 @@ void Menu::CityToAirportInterface(int i , int d ,vector<std::string>airlines,boo
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Digite os Parametros :                                          ##"<<std::endl;
+    std::cout<<"##   Digite os Parametros:                                           ##"<<std::endl;
     std::cout<<"##   (Escrever codigo ou nome do Aeroporto)                          ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Cidade:_______                                     ##"<<std::endl;
@@ -2079,7 +2072,7 @@ void Menu::CityToAirportInterface(int i , int d ,vector<std::string>airlines,boo
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (!existCity(k)){
@@ -2094,7 +2087,7 @@ void Menu::CityToAirportInterface(int i , int d ,vector<std::string>airlines,boo
     std::getline(std::cin, k2);
     if (k2 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     auto r = getAirportByName(k2);
@@ -2142,7 +2135,7 @@ void Menu::CityToGeoCordinatesInterface(int i, int d, vector<std::string>airline
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Digite os Parametros :                                          ##"<<std::endl;
+    std::cout<<"##   Digite os Parametros:                                           ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Cidade:_______                                     ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
@@ -2160,7 +2153,7 @@ void Menu::CityToGeoCordinatesInterface(int i, int d, vector<std::string>airline
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (!existCity(k)){
@@ -2175,7 +2168,7 @@ void Menu::CityToGeoCordinatesInterface(int i, int d, vector<std::string>airline
     std::getline(std::cin, k2);
     if (k2 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k2) < -90 || stod(k2) > 90){
@@ -2190,7 +2183,7 @@ void Menu::CityToGeoCordinatesInterface(int i, int d, vector<std::string>airline
     std::getline(std::cin, k1);
     if (k1 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k1) < -180 || stod(k1) > 180){
@@ -2211,7 +2204,7 @@ void Menu::CityToGeoCordinatesInterfaceResult(int i, int d, vector<std::string>a
     std::cin>> k;
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        CityToGeoCordinatesInterfaceResult(i,d,airlines,minimize,c,lat1,long1);
+        CityToGeoCordinatesInterface(i,d,airlines,minimize);
     }
     else{
         std::cout << "Opcao invalida. Por favor, escolha uma opcao valida." << std::endl;
@@ -2242,7 +2235,7 @@ void Menu::GeoCordinatesToAirportInterface(int i,int d,vector<std::string>airlin
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Digite os Parametros :                                          ##"<<std::endl;
+    std::cout<<"##   Digite os Parametros:                                           ##"<<std::endl;
     std::cout<<"##   (Codigo ou nome do aeroporto)                                   ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Latitude inicio:_______(-90 a 90)                  ##"<<std::endl;
@@ -2261,12 +2254,12 @@ void Menu::GeoCordinatesToAirportInterface(int i,int d,vector<std::string>airlin
     std::getline(std::cin, k2);
     if (k2 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k2) < -90 || stod(k2) > 90){
         std::cout << "A latitude deve compreender os valores colocados na tela." << std::endl;
-        AirportToGeoCordinatesInterface(i,d,airlines,minimize);
+        GeoCordinatesToAirportInterface(i,d,airlines,minimize);
         return;
     }
     std::cout<<"Longitude: ";
@@ -2276,12 +2269,12 @@ void Menu::GeoCordinatesToAirportInterface(int i,int d,vector<std::string>airlin
     std::getline(std::cin, k1);
     if (k1 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k1) < -180 || stod(k1) > 180){
         std::cout << "A latitude deve compreender os valores colocados na tela." << std::endl;
-        AirportToGeoCordinatesInterface(i,d,airlines,minimize);
+        GeoCordinatesToAirportInterface(i,d,airlines,minimize);
         return;
     }
     std::string k;
@@ -2291,7 +2284,7 @@ void Menu::GeoCordinatesToAirportInterface(int i,int d,vector<std::string>airlin
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     auto r = getAirportByName(k);
@@ -2344,7 +2337,7 @@ void Menu::GeoCordinatesToCityInterface(int i,int d,vector<std::string>airlines,
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Digite os Parametros :                                          ##"<<std::endl;
+    std::cout<<"##   Digite os Parametros:                                           ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Latitude inicio:_______(-90 a 90)                  ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
@@ -2362,7 +2355,7 @@ void Menu::GeoCordinatesToCityInterface(int i,int d,vector<std::string>airlines,
     std::getline(std::cin, k2);
     if (k2 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k2) < -90 || stod(k2) > 90){
@@ -2377,7 +2370,7 @@ void Menu::GeoCordinatesToCityInterface(int i,int d,vector<std::string>airlines,
     std::getline(std::cin, k1);
     if (k1 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k1) < -180 || stod(k1) > 180){
@@ -2392,7 +2385,7 @@ void Menu::GeoCordinatesToCityInterface(int i,int d,vector<std::string>airlines,
     std::getline(std::cin, k);
     if (k == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (!existCity(k)){
@@ -2443,7 +2436,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::cout<<std::endl;
     std::cout<<"#######################################################################"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
-    std::cout<<"##   Digite os Parametros :                                          ##"<<std::endl;
+    std::cout<<"##   Digite os Parametros:                                           ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
     std::cout<<"##     Introduzir Latitude inicio:_______(-90 a 90)                  ##"<<std::endl;
     std::cout<<"##                                                                   ##"<<std::endl;
@@ -2463,7 +2456,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::getline(std::cin, k1);
     if (k1 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k1) < -90 || stod(k1) > 90){
@@ -2478,7 +2471,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::getline(std::cin, k2);
     if (k2 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k2) < -180 || stod(k2) > 180){
@@ -2493,7 +2486,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::getline(std::cin, k3);
     if (k3 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k3) < -90 || stod(k3) > 90){
@@ -2508,7 +2501,7 @@ void Menu::GeoCordinatesToGeoCordinatesInterface(int i,int d,vector<std::string>
     std::getline(std::cin, k4);
     if (k4 == "0") {
         std::cout << std::endl << "A sair ..." << std::endl;
-        choose( i,d,airlines, minimize);
+        minimizeAirlinesInterface( i,d,airlines);
         return;
     }
     if (stod(k4) < -180 || stod(k4) > 180){

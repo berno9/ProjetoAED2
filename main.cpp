@@ -5,7 +5,7 @@
 #include <set>
 #include <unordered_map>
 
-void loadAirports(Graph<Airport> &g,unordered_map<std::string,std::string> &nameToCodeAirport,set<std::string> &cities,set<std::string> &countries) {
+void loadAirports(Graph<Airport> &g,unordered_map<std::string,std::string> &nameToCodeAirport,unordered_set<std::string> &cities,unordered_set<std::string> &countries) {
     ifstream aeroportos("airports.csv");
     vector<string> temp;
     string line;
@@ -25,7 +25,7 @@ void loadAirports(Graph<Airport> &g,unordered_map<std::string,std::string> &name
     }
 }
 
-void loadAirlines(unordered_map<std::string ,Airline> &airlines) {
+void loadAirlines(unordered_map<std::string ,Airline> &airlines,unordered_set<std::string> &airlinesNames,unordered_set<std::string> &airlinesCodes) {
     ifstream linhas("airlines.csv");
     vector<string> temp;
     string line;
@@ -38,6 +38,8 @@ void loadAirlines(unordered_map<std::string ,Airline> &airlines) {
         while (getline(iss, eachWord, ',')) temp.push_back(eachWord);
         Airline airline = Airline(temp[0],temp[1],temp[2],temp[3]);
         airlines.insert({temp[0],airline});
+        airlinesNames.insert(temp[1]);
+        airlinesCodes.insert(temp[0]);
         temp.clear();
     }
 }
@@ -74,15 +76,16 @@ int main() {
     Graph<Airport> g;
     unordered_map<std::string ,Airline> airlines;
     unordered_map<std::string,std::string> nameToCodeAirport;
-    set<std::string> cities;
-    set<std::string> countries;
-    vector<Flight> flights; // We can order this from the source Airport so the loadFlightsToEdges is faster
+    unordered_set<std::string> cities;
+    unordered_set<std::string> countries;
+    unordered_set<std::string> airlinesNames;
+    unordered_set<std::string> airlinesCodes;
+    vector<Flight> flights;
     loadAirports(g,nameToCodeAirport,cities,countries);
-    loadAirlines(airlines);
+    loadAirlines(airlines,airlinesNames,airlinesCodes);
     loadFlights(flights);
     loadFlightsToEdges(g,flights,airlines);
-    Menu menu = Menu(&g,nameToCodeAirport,cities,countries);
+    Menu menu = Menu(&g,nameToCodeAirport,cities,countries,airlinesNames,airlinesCodes);
     menu.secBase();
     return 0;
 }
-
