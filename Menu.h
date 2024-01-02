@@ -56,10 +56,10 @@ public:
 
     /// Interface que mostra o número total de voos e de aeroportos
     void numberOfAirportsInterface();
-        /// Função que obtem o número total de aeroportos
-        int numberOfAirports();
-        /// Função que obtem o número total de voos
-        int numberOfFlights();
+    /// Função que obtem o número total de aeroportos
+    int numberOfAirports();
+    /// Função que obtem o número total de voos
+    int numberOfFlights();
 
     /// Interface que recebe um aeroporto
     void nFlightAirlineInAirportChoiceInterface();
@@ -92,6 +92,7 @@ public:
     void nFlightPerCityInterfaceAll();
     /// Função que calcula o número de voos por cidade
     /// @return conjunto de pares com a cidade e a respetiva contagem de voos
+    /// Complexidade esperada : 0(n)
     map<std::string,int> nFlightPerCity();
     /// Caso companhia aérea seja escolhida ///
     /// O utilizador pode escolher visualizar todos os voos de todas as companhias ou de apenas uma
@@ -125,6 +126,7 @@ public:
     /// Função que realiza esse cálculo
     /// @param city : cidade escolhida
     /// @return conjunto de pares com o país e a respetiva contagem de voos
+    /// Complexidade esperada : 0(n^2)
     map<std::string,int> cityToCountries(std::string city);
     /// Caso escolha aeroporto ///
     /// Escolher o aeroporto pretendido
@@ -151,6 +153,7 @@ public:
     /// Caso tenha sido escolhido aeroportos
     /// @param airport : vértice correspondente ao aeroporto escolhido
     /// @return conjunto de pares com o nome de cada aeroporto disponível com o respetivo número de caminhos até lá
+    /// Complexidade esperada : n * m, 0(n^2)
     map<std::string,int> nDestinationsAirports(Vertex<Airport>* airport);
     /// Caso tenha sido escolhido cidades
     /// @param airport : vértice correspondente ao aeroporto escolhido
@@ -182,6 +185,7 @@ public:
     /// @param airport : aeroporto escolhido
     /// @param k : número máximo de escalas
     /// @return conjunto de pares com o destino disponível e o número de caminhos até lá
+    /// Complexidade esperada : n * m, 0(n^2)
     map<std::string,int> nReachableDestinationsAirports(Vertex<Airport>* airport,int k);
     /// Caso tenha sido escolhido cidades
     /// @param airport : aeroporto escolhido
@@ -200,6 +204,7 @@ public:
     void maxTripInterface();
     /// Função que faz esse cálculo
     /// @return um vetor com os pares de aeroportos com a maior distância, seguidos desse valor
+    /// Complexidade esperada : n * m * o * p, O(n^4)
     pair<vector<pair<std::string,std::string>>,int>maxTrip();
 
 
@@ -220,6 +225,7 @@ public:
     void essentialAirportsInterface();
     /// Função que realiza esse cálculo
     /// @return conjunto de aeroportos que, se removidos, provocam que outros se tornem impossíveis de alcançar
+    /// Complexidade esperada : n * m, O(n^2)
     set<std::string> essentialAirports();
 
 
@@ -269,6 +275,7 @@ public:
     /// @param v : vértice de origem
     /// @param d : vértice de destino
     /// @return lista do conjunto de voos possíveis
+    /// Complexidade esperada : n * m * o, O(n^4)
     vector<vector<Flight>> AirportToAirport(Vertex<Airport>* v, Vertex<Airport>* b);
     /// Função para realizar esse cálculo com companhias aéreas preferenciais
     /// @param v : vértice de origem
@@ -460,6 +467,7 @@ public:
     /// @param s : fila de aeroportos de partida
     /// @param t : fila de aeroportos de chegada
     /// @return lista do conjunto de voos possíveis
+    /// Complexidade esperada : n * m * o, O(n^3)
     vector<vector<Flight>> ListAirportToListAirport(queue<Vertex<Airport>*> s, queue<Vertex<Airport>*> t); // General function used in almost every case
     /// Função geral usada para descobrir os melhores voos de uma lista de aeroportos para outra lista dos mesmos tendo em conta um filtro de companhias
     /// @param s : fila de aeroportos de partida
